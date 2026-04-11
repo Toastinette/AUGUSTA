@@ -326,33 +326,23 @@ function parseEvent(ev){
       raw.push({
         displayName:name,
         normName:norm(name),
-        stpTotal,       // score cumulé sur le tournoi
-        roundScores,    // scores par round (score du jour isolé)
+        stpTotal,    // score cumulé sur le tournoi
+        roundScores, // scores par round (score du jour isolé, pour bonus uniquement)
         madeCut,
-        rank:null,
-        rankByRound:{}  // sera calculé après
+        rank:null    // rang cumulé — seul classement utilisé partout
       });
     }
   }
 
-  // Classement sur le cumulé total
+  // Classement UNIQUE basé sur le score cumulé total
+  // Ce rang est utilisé pour TOUS les onglets (total et par jour)
   const active=raw.filter(p=>p.madeCut!==false&&p.stpTotal!==null);
   const cut=raw.filter(p=>p.madeCut===false);
   const noScore=raw.filter(p=>p.madeCut!==false&&p.stpTotal===null);
 
-  // Rang total (scores distincts)
   active.sort((a,b)=>a.stpTotal-b.stpTotal);
   const distinctTotal=[...new Set(active.map(p=>p.stpTotal))].sort((a,b)=>a-b);
   for(const p of active) p.rank=distinctTotal.indexOf(p.stpTotal)+1;
-
-  // Rang par round (scores distincts du jour)
-  for(let r=1;r<=4;r++){
-    const withScore=raw.filter(p=>p.roundScores[r]!==undefined);
-    if(withScore.length===0)continue;
-    withScore.sort((a,b)=>a.roundScores[r]-b.roundScores[r]);
-    const distinctR=[...new Set(withScore.map(p=>p.roundScores[r]))].sort((a,b)=>a-b);
-    for(const p of withScore) p.rankByRound[r]=distinctR.indexOf(p.roundScores[r])+1;
-  }
 
   const allPlayers=[...active,...noScore,...cut];
   const leader=active.length>0?active[0]:null;
@@ -363,17 +353,22 @@ function parseEvent(ev){
 // ═══════════════════════════════════════
 //  POINTS
 // ═══════════════════════════════════════
-function calcPtsForRound(player, roundNum, currentRound, isFinal){
+function calcPtsForRound(player, roundNum){
   if(!player)return{pts:0,nf:true};
+
+  // Rang = toujours le rang CUMULÉ (jamais le rang du round isolé)
+  const rank=player.rank;
+  if(rank===undefined||rank===null)return{pts:0,nf:false,noData:true};
+
+  // Score du jour isolé — uniquement pour le bonus score
+  const score=player.roundScores[roundNum];
+  if(score===undefined)return{pts:0,nf:false,noData:true};
+
   const isR4=roundNum===4;
   const mult=isR4?2:1;
 
-  const rank=player.rankByRound[roundNum];
-  if(rank===undefined)return{pts:0,nf:false,noData:true};
-
-  const score=player.roundScores[roundNum]; // score du jour (negatif=bon)
-  const rankPts=totalRankPts(rank);         // points de rang + palier
-  const scorePts= score!==null&&score!==undefined ? -score : 0; // -(-7)=+7, -(+3)=-3
+  const rankPts=totalRankPts(rank);                              // pts rang + palier cumulé
+  const scorePts=score!==null ? -score : 0;                      // -(-7)=+7 / -(+3)=-3
   const pts=(rankPts+scorePts)*mult;
   return{pts,rankPts,scorePts,rank,score,mult,nf:false};
 }
@@ -457,7 +452,7 @@ function renderPodium(parsed){
         let sumPts=0;
         const byRound=[];
         for(let r=1;r<=currentRound;r++){
-          const c=calcPtsForRound(ep,r,currentRound,isFinal);
+          const c=calcPtsForRound(ep,r);
           if(!c.nf&&!c.noData){
             byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score,mult:c.mult});
             sumPts+=c.pts;
@@ -469,7 +464,7 @@ function renderPodium(parsed){
         return{name:g,ep,sumPts,byRound,cutBonus,isTotal:true};
       } else {
         // Score d'un seul round
-        const c=calcPtsForRound(ep,roundNum,currentRound,isFinal);
+        const c=calcPtsForRound(ep,roundNum);
         const pts=c.nf?0:c.pts;
         total+=pts;
         return{name:g,ep,pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score,mult:c.mult,noData:c.noData,nf:c.nf,isTotal:false};
@@ -529,7 +524,7 @@ function renderPodium(parsed){
         if(d.noData)return`<div class="drow"><span class="dn">${name}</span><span class="dp nf">—</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
         const s=fmtStp(d.score);
         // Rang dans le round
-        const sameRankR=d.rank?players.filter(pl=>pl.rankByRound[roundNum]===d.rank).length:0;
+        const sameRankR=d.rank?players.filter(pl=>pl.rank===d.rank).length:0;
         const posLbl=d.rank?(sameRankR>1?`T${d.rank}`:`${d.rank}`+(d.rank===1?'er':'e')):'—';
         const posCls=d.rank&&d.rank<=3?'top3':'';
         const ptsCls=d.pts<0?'neg':d.pts===0?'zero':'';
