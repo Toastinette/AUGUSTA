@@ -229,26 +229,71 @@ function parseEvent(ev){
   const sn=(st.type?.name||'').toLowerCase();
   const isLive=sn.includes('progress')||sn==='in';
   const isFinal=sn.includes('post')||sn.includes('final')||sn.includes('complete');
-  const players=[];
+
+  const raw_players=[];
   for(const c of(ev.competitions||[])){
     for(const ath of(c.competitors||[])){
       const a=ath.athlete||{};
       const name=a.displayName||a.fullName||'';
       if(!name)continue;
+
+      // ── Score to par : ESPN peut envoyer "score" (entier relatif) ou "displayScore" (string "-12","E","+2")
       let stp=null;
-      const raw=ath.score??ath.displayScore??'';
-      if(raw!==''&&raw!=='--'&&raw!==null){
-        if(raw==='E'||raw==='EVEN'){stp=0;}
-        else{const n=parseInt(String(raw).replace(/[^0-9+\-]/g,''));if(!isNaN(n))stp=n;}
+      // Essaie d'abord le champ numérique linescores / statistics
+      // puis le champ score (string), puis displayScore
+      const candidates=[ath.score, ath.displayScore, ath.linescores?.[round-1]?.displayValue];
+      for(const raw of candidates){
+        if(raw===undefined||raw===null||raw==='')continue;
+        const s=String(raw).trim();
+        if(s==='--'||s==='CUT'||s==='WD'||s==='DQ')break;
+        if(s==='E'||s==='EVEN'){stp=0;break;}
+        // Supprime tout sauf chiffres, + et -
+        const cleaned=s.replace(/[^0-9+\-]/g,'');
+        if(cleaned==='')continue;
+        const n=parseInt(cleaned,10);
+        if(!isNaN(n)){stp=n;break;}
       }
-      const rank=(typeof ath.sortOrder==='number'&&ath.sortOrder>0)?Math.round(ath.sortOrder):null;
-      const cf=(ath.status?.type?.name||'').toLowerCase();
-      const madeCut=cf.includes('cut')?false:(round>=3?true:null);
-      players.push({displayName:name,normName:norm(name),rank,stp,madeCut});
+
+      // ── Cut : détecte via status ET via score manquant après R2
+      const statusName=(ath.status?.type?.name||ath.status?.type?.description||'').toLowerCase();
+      const statusShort=(ath.status?.type?.shortDetail||'').toLowerCase();
+      const isCut=statusName.includes('cut')||statusShort.includes('cut')||
+                  statusName==='wd'||statusName==='dq';
+      // Après le cut (round>=3), si le joueur n'a pas de score valide → cut manqué
+      const madeCut = isCut ? false : (round>=3 ? true : null);
+
+      raw_players.push({displayName:name, normName:norm(name), stp, madeCut, rank:null});
     }
   }
-  players.sort((a,b)=>(a.rank??9999)-(b.rank??9999));
-  const leader=players.find(p=>p.rank===1)||null;
+
+  // ── Recalcul du vrai classement par score (ignore totalement ESPN sortOrder)
+  // Sépare joueurs actifs (non-cut) et éliminés
+  const active  = raw_players.filter(p=>p.madeCut!==false && p.stp!==null);
+  const cut     = raw_players.filter(p=>p.madeCut===false);
+  const noScore = raw_players.filter(p=>p.madeCut!==false && p.stp===null);
+
+  // Trie les actifs du meilleur score (le plus bas = meilleur au golf) au pire
+  active.sort((a,b)=>a.stp-b.stp);
+
+  // Attribue le vrai rang avec gestion des ex-aequo
+  // Ex: scores [-13,-12,-12,-12,-10] → rangs [1,2,2,2,5]
+  let i=0;
+  while(i<active.length){
+    const score=active[i].stp;
+    let j=i;
+    while(j<active.length && active[j].stp===score) j++;
+    // Les joueurs i..j-1 partagent tous le rang (i+1)
+    const sharedRank=i+1;
+    for(let k=i;k<j;k++) active[k].rank=sharedRank;
+    i=j;
+  }
+
+  // Reconstruit la liste complète
+  const players=[...active, ...noScore, ...cut];
+
+  // Leader = joueur de rang 1 (le meilleur score parmi les actifs)
+  const leader=active.length>0?active[0]:null;
+
   return{players,round,isLive,isFinal,leader};
 }
 
@@ -305,7 +350,9 @@ function render(ev){
       const{name,ep,c}=d;
       if(!ep||c.nf)return`<div class="drow"><span class="dn">${name}</span><span class="dp nf">?</span><span class="ds">—</span><span class="dpt zero">0</span></div>`;
       const s=fmtStp(ep.stp);
-      const posLbl=ep.madeCut===false?'CUT':ep.rank?`T${ep.rank}`:'—';
+      // Label de position : T devant si ex-aequo (plusieurs joueurs au même rang)
+      const sameRankCount=ep.rank?players.filter(p=>p.rank===ep.rank).length:0;
+      const posLbl=ep.madeCut===false?'CUT':ep.rank?(sameRankCount>1?`T${ep.rank}`:`${ep.rank}`+((ep.rank===1)?'er':'e')):'—';
       const posCls=ep.madeCut===false?'cut':ep.rank&&ep.rank<=3?'top3':'';
       const ptsCls=c.total<0?'neg':c.total===0?'zero':'';
       const x2=c.x2?'<sup>×2</sup>':'';
