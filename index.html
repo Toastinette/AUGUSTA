@@ -275,17 +275,12 @@ function parseEvent(ev){
   // Trie les actifs du meilleur score (le plus bas = meilleur au golf) au pire
   active.sort((a,b)=>a.stp-b.stp);
 
-  // Attribue le vrai rang avec gestion des ex-aequo
-  // Ex: scores [-13,-12,-12,-12,-10] → rangs [1,2,2,2,5]
-  let i=0;
-  while(i<active.length){
-    const score=active[i].stp;
-    let j=i;
-    while(j<active.length && active[j].stp===score) j++;
-    // Les joueurs i..j-1 partagent tous le rang (i+1)
-    const sharedRank=i+1;
-    for(let k=i;k<j;k++) active[k].rank=sharedRank;
-    i=j;
+  // Rang = nombre de scores DISTINCTS meilleurs que soi + 1
+  // Ex: [-12,-6,-6,-5,-5,-5,-4] => rangs [1, 2,2, 3,3,3, 4,4,4,4]
+  // McIlroy=1, Burns/Reed=2, Lowry/Fleetwood/Rose=3, Day/...=4
+  const distinctScores=[...new Set(active.map(p=>p.stp))].sort((a,b)=>a-b);
+  for(const p of active){
+    p.rank=distinctScores.indexOf(p.stp)+1;
   }
 
   // Reconstruit la liste complète
