@@ -288,7 +288,7 @@ function parseEvent(ev){
   const currentRound=st.period||1;
   const sn=(st.type?.name||'').toLowerCase();
   const isLive=sn.includes('progress')||sn==='in';
-  const isFinal=sn.includes('post')||sn.includes('final')||sn.includes('complete');
+  const isFinal=(sn.includes('post')||sn.includes('final')||sn.includes('complete'))&&currentRound===4;
 
   const raw=[];
   for(const c of(ev.competitions||[])){
@@ -364,18 +364,18 @@ function parseEvent(ev){
 //  POINTS
 // ═══════════════════════════════════════
 function calcPtsForRound(player, roundNum, currentRound, isFinal){
-  // Points pour un round donné (score isolé du jour)
   if(!player)return{pts:0,nf:true};
-  
-  // Cut : -5 appliqué uniquement dans le total (pas par jour)
   const isR4=roundNum===4;
   const mult=isR4?2:1;
 
   const rank=player.rankByRound[roundNum];
   if(rank===undefined)return{pts:0,nf:false,noData:true};
 
-  const pts=totalRankPts(rank)*mult;
-  return{pts,rank,score:player.roundScores[roundNum],mult,nf:false};
+  const score=player.roundScores[roundNum]; // score du jour (negatif=bon)
+  const rankPts=totalRankPts(rank);         // points de rang + palier
+  const scorePts= score!==null&&score!==undefined ? -score : 0; // -(-7)=+7, -(+3)=-3
+  const pts=(rankPts+scorePts)*mult;
+  return{pts,rankPts,scorePts,rank,score,mult,nf:false};
 }
 
 function calcCutBonus(player){
@@ -459,7 +459,7 @@ function renderPodium(parsed){
         for(let r=1;r<=currentRound;r++){
           const c=calcPtsForRound(ep,r,currentRound,isFinal);
           if(!c.nf&&!c.noData){
-            byRound.push({r,pts:c.pts,rank:c.rank,score:c.score,mult:c.mult});
+            byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score,mult:c.mult});
             sumPts+=c.pts;
           }
         }
@@ -472,7 +472,7 @@ function renderPodium(parsed){
         const c=calcPtsForRound(ep,roundNum,currentRound,isFinal);
         const pts=c.nf?0:c.pts;
         total+=pts;
-        return{name:g,ep,pts,rank:c.rank,score:c.score,mult:c.mult,noData:c.noData,nf:c.nf,isTotal:false};
+        return{name:g,ep,pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score,mult:c.mult,noData:c.noData,nf:c.nf,isTotal:false};
       }
     });
 
@@ -508,7 +508,12 @@ function renderPodium(parsed){
         const ptsCls=d.sumPts<0?'neg':d.sumPts===0?'zero':'';
         const sign=d.sumPts>=0?'+':'';
         // Détail breakdown par round
-        const breakdown=d.byRound.map(b=>`J${b.r}:${b.pts>=0?'+':''}${b.pts}${b.mult===2?'×2':''}`).join(' ');
+        const breakdown=d.byRound.map(b=>{
+          const rp=b.rankPts!==undefined?b.rankPts:b.pts;
+          const sp=b.scorePts!==undefined?b.scorePts:0;
+          const x2=b.mult===2?'×2':'';
+          return `J${b.r}:${b.pts>=0?'+':''}${b.pts}${x2}`;
+        }).join(' ');
         const cutStr=d.cutBonus!==0?(d.cutBonus>0?` cut:+${d.cutBonus}`:`cut:${d.cutBonus}`):'';
         return`<div class="drow">
           <span class="dn">${name}</span>
@@ -530,11 +535,19 @@ function renderPodium(parsed){
         const ptsCls=d.pts<0?'neg':d.pts===0?'zero':'';
         const sign=d.pts>=0?'+':'';
         const x2=d.mult===2?'<span class="x2b">×2</span>':'';
+        // Détail rang pts + score pts
+        const rankPtsDisp=d.rankPts!==undefined?d.rankPts:null;
+        const scorePtsDisp=d.scorePts!==undefined?d.scorePts:null;
+        const detailSub=(rankPtsDisp!==null&&scorePtsDisp!==null)
+          ?`rang:+${rankPtsDisp} score:${scorePtsDisp>=0?'+':''}${scorePtsDisp}`:'';
         return`<div class="drow">
           <span class="dn">${name}</span>
           <span class="dp ${posCls}">${posLbl}</span>
           <span class="ds ${s.c}">${s.t}</span>
-          <span class="dpt ${ptsCls}">${sign}${d.pts}${x2}</span>
+          <div style="text-align:right">
+            <div class="dpt ${ptsCls}">${sign}${d.pts}${x2}</div>
+            ${detailSub?`<div class="dpt-detail">${detailSub}</div>`:''}
+          </div>
         </div>`;
       }
     }).join('');
