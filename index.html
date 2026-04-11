@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Masters 2026 · Le Pari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --g0:#0f2318; --g1:#1a3a2a; --g2:#2d5a3d;
+      --gold:#c9a84c; --gold2:#e8c97a; --gold3:#f5e4b0;
+      --cream:#f5f0e8; --cream2:#d4c9b5;
+      --txt1:#ffffff; --txt2:#9ab8a6; --txt3:#5a7a68;
+      --card-bg:rgba(255,255,255,0.055); --card-bd:rgba(255,255,255,0.09);
+      --r:18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'DM Sans',sans-serif;background:var(--g0);
+      color:var(--txt1);min-height:100vh;padding-bottom:60px;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%,rgba(61,122,82,.3) 0%,transparent 70%),
+        radial-gradient(ellipse 60% 40% at 90% 110%,rgba(201,168,76,.1) 0%,transparent 60%);
+    }
+    .wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 16px;}
+
+    /* HEADER */
+    header{text-align:center;padding:36px 0 20px;border-bottom:1px solid rgba(201,168,76,.2);margin-bottom:20px;}
+    .eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+    header h1{font-family:'Playfair Display',serif;font-size:clamp(32px,10vw,46px);font-weight:900;line-height:1;color:var(--txt1);}
+    header h1 em{color:var(--gold);font-style:italic;}
+    .hsub{font-size:12px;color:var(--txt3);margin-top:8px;font-family:'DM Mono',monospace;letter-spacing:1.5px;}
+    .hbadge{display:inline-block;margin-top:14px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);border-radius:100px;padding:5px 14px;font-size:11px;font-family:'DM Mono',monospace;color:var(--gold2);}
+
+    /* STATUS */
+    .status-bar{display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--card-bd);border-radius:12px;padding:10px 14px;margin-bottom:14px;}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#64748b;transition:background .3s;}
+    .dot.live{background:#4ade80;box-shadow:0 0 8px #4ade8088;animation:blink 2s infinite;}
+    .dot.err{background:#ef4444;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    .s-round{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);flex:1;}
+    .s-time{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;white-space:nowrap;}
+
+    /* BTN */
+    .btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--g0);border:none;border-radius:var(--r);padding:15px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:22px;box-shadow:0 6px 24px rgba(201,168,76,.3);transition:transform .15s,box-shadow .15s;}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.4);}
+    .btn:active{transform:translateY(0);}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .sp{display:inline-block;animation:spin .7s linear infinite;}
+
+    /* BANNER */
+    .banner{border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.55;margin-bottom:18px;}
+    .berr{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
+    .binfo{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold2);}
+
+    /* CARDS */
+    .podium{display:flex;flex-direction:column;gap:12px;}
+    .pcard{background:var(--card-bg);border:1px solid var(--card-bd);border-radius:var(--r);overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer;}
+    .pcard:hover{transform:translateY(-2px);}
+    .pcard.r1{border-color:rgba(201,168,76,.45);background:rgba(201,168,76,.07);}
+    .pcard.r2{border-color:rgba(178,190,210,.3);}
+    .pcard.r3{border-color:rgba(180,90,70,.3);}
+
+    .ptop{display:flex;align-items:center;gap:12px;padding:16px 18px 0;}
+    .rnum{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;min-width:28px;text-align:center;line-height:1;}
+    .r1 .rnum{color:var(--gold);}
+    .r2 .rnum{color:#b2bed2;}
+    .r3 .rnum{color:#c47858;}
+    .ppx{image-rendering:pixelated;display:block;flex-shrink:0;}
+    .pinfo{flex:1;min-width:0;}
+    .pname{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);line-height:1.1;}
+    .plabel{font-size:11px;color:var(--txt3);margin-top:3px;font-family:'DM Mono',monospace;}
+    .plabel.c1{color:var(--gold2);}
+    .plabel.c2{color:#d4839a;}
+    .plabel.c3{color:#d4957a;}
+    .ppts{text-align:right;flex-shrink:0;}
+    .ppts-n{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--txt1);line-height:1;}
+    .ppts-l{font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);letter-spacing:1.5px;margin-top:2px;}
+
+    .pmid{padding:6px 18px 14px;display:flex;align-items:center;justify-content:flex-end;}
+    .chev{font-size:11px;color:var(--txt3);transition:transform .3s;font-family:'DM Mono',monospace;}
+    .pcard.open .chev{transform:rotate(180deg);}
+
+    /* DETAIL */
+    .detail{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+    .pcard.open .detail{max-height:700px;}
+    .din{border-top:1px solid rgba(255,255,255,.07);padding:14px 18px 18px;}
+
+    .dhead{display:grid;grid-template-columns:1fr 58px 48px 58px;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
+    .dhead span{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-family:'DM Mono',monospace;}
+    .dhead span:nth-child(n+2){text-align:center;}
+    .dhead span:last-child{text-align:right;}
+
+    .drow{display:grid;grid-template-columns:1fr 58px 48px 58px;gap:6px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .drow:last-child{border-bottom:none;}
+    .dn{font-size:13px;font-weight:500;color:var(--txt1);}
+    .dp{font-family:'DM Mono',monospace;font-size:11px;text-align:center;padding:3px 5px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--cream2);}
+    .dp.cut{background:rgba(239,68,68,.18);color:#fca5a5;}
+    .dp.top3{background:rgba(201,168,76,.22);color:var(--gold2);}
+    .dp.nf{background:rgba(100,116,139,.15);color:#94a3b8;}
+    .ds{font-family:'DM Mono',monospace;font-size:12px;text-align:center;}
+    .ds.under{color:#4ade80;} .ds.over{color:#f87171;} .ds.even{color:var(--cream2);}
+    .dpt{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;text-align:right;color:var(--gold);}
+    .dpt.neg{color:#f87171;} .dpt.zero{color:var(--txt3);}
+    .dpt sup{font-size:9px;color:var(--txt3);}
+
+    .bonus{margin-top:10px;padding:9px 12px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;display:flex;justify-content:space-between;align-items:center;}
+    .bonus span:first-child{font-size:12px;color:#86efac;font-family:'DM Mono',monospace;}
+    .bonus span:last-child{font-size:13px;font-weight:600;color:#4ade80;font-family:'DM Mono',monospace;}
+    .pred{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);margin-top:10px;}
+    .pred strong{color:var(--cream2);}
+
+    /* SKELETON */
+    .skel{height:90px;border-radius:var(--r);background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 100%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;}
+    @keyframes shimmer{to{background-position:-200% 0}}
+
+    footer{text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);line-height:2;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Augusta National · 2026</div>
+    <h1>Masters<br/><em>Le Pari</em></h1>
+    <div class="hsub">MORGAN · BAPTISTE · CHRIS</div>
+    <div class="hbadge">⛳ Masters Tournament 2026</div>
+  </header>
+
+  <div class="status-bar">
+    <div class="dot" id="dot"></div>
+    <div class="s-round" id="sround">Chargement...</div>
+    <div class="s-time" id="stime">—</div>
+  </div>
+
+  <button class="btn" id="btnR" onclick="main()">
+    <span id="btnI">⛳</span>
+    <span>Actualiser les scores</span>
+  </button>
+
+  <div id="bzone"></div>
+  <div class="podium" id="pzone">
+    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+  </div>
+
+  <footer>Données ESPN · Paris entre amis · Masters 2026<br/>Augusta National Golf Club · Géorgie, USA</footer>
+</div>
+
+<script>
+// ── CONFIG ──
+const PARTS = [
+  {id:'morgan',  name:'Morgan',  golfers:['Justin Rose','Shane Lowry','Tommy Fleetwood','Jason Day'], guess:-11},
+  {id:'baptiste',name:'Baptiste',golfers:['Rory McIlroy','Tommy Fleetwood','Ludvig Åberg','Max Homa'], guess:-12},
+  {id:'chris',   name:'Chris',   golfers:['Matt Fitzpatrick','Rory McIlroy','Ludvig Åberg','Xander Schauffele'], guess:-17}
+];
+const POS_PTS=[{m:1,p:25},{m:2,p:18},{m:3,p:12},{m:10,p:8},{m:20,p:5},{m:30,p:3}];
+function posPts(r){if(!r||r<1)return 0;for(const x of POS_PTS)if(r<=x.m)return x.p;return 0;}
+
+// ── PIXEL ART ──
+const SVG_STAR=`<svg width="34" height="34" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" class="ppx">
+<rect x="3" y="0" width="2" height="2" fill="#FFD700"/>
+<rect x="0" y="2" width="8" height="2" fill="#FFD700"/>
+<rect x="1" y="4" width="2" height="1" fill="#FFD700"/>
+<rect x="5" y="4" width="2" height="1" fill="#FFD700"/>
+<rect x="0" y="5" width="2" height="3" fill="#FFC200"/>
+<rect x="6" y="5" width="2" height="3" fill="#FFC200"/>
+<rect x="3" y="5" width="2" height="2" fill="#FFD700"/>
+<rect x="2" y="1" width="1" height="1" fill="#FFF5AA" opacity=".5"/>
+</svg>`;
+const SVG_WINE=`<svg width="26" height="34" viewBox="0 0 6 9" xmlns="http://www.w3.org/2000/svg" class="ppx">
+<rect x="1" y="0" width="4" height="1" fill="#9B2335"/>
+<rect x="0" y="1" width="6" height="1" fill="#B52A40"/>
+<rect x="0" y="2" width="6" height="2" fill="#C93050"/>
+<rect x="1" y="4" width="4" height="1" fill="#A52840"/>
+<rect x="2" y="5" width="2" height="2" fill="#8B1E2E"/>
+<rect x="1" y="7" width="4" height="1" fill="#8B1E2E"/>
+<rect x="0" y="8" width="6" height="1" fill="#6B1020"/>
+<rect x="1" y="1" width="1" height="1" fill="#E86890" opacity=".5"/>
+</svg>`;
+const SVG_MEAT=`<svg width="38" height="28" viewBox="0 0 10 7" xmlns="http://www.w3.org/2000/svg" class="ppx">
+<rect x="5" y="0" width="2" height="1" fill="#7B4E2D"/>
+<rect x="5" y="1" width="1" height="2" fill="#7B4E2D"/>
+<rect x="0" y="2" width="10" height="1" fill="#C0392B"/>
+<rect x="0" y="3" width="10" height="2" fill="#E74C3C"/>
+<rect x="0" y="5" width="10" height="1" fill="#C0392B"/>
+<rect x="1" y="6" width="8" height="1" fill="#A93226"/>
+<rect x="2" y="3" width="2" height="1" fill="#F1948A" opacity=".55"/>
+<rect x="5" y="2" width="2" height="1" fill="#F1948A" opacity=".35"/>
+</svg>`;
+const PRIZES=[
+  {svg:SVG_STAR, cls:'c1', label:'🏆 Vainqueur — ne paye rien !'},
+  {svg:SVG_WINE, cls:'c2', label:'🍷 2ème — paye le vin'},
+  {svg:SVG_MEAT, cls:'c3', label:'🥩 3ème — paye la viande'}
+];
+
+// ── HELPERS ──
+function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').trim();}
+function fmtStp(n){if(n===null||n===undefined)return{t:'—',c:''};if(n===0)return{t:'E',c:'even'};return n<0?{t:`${n}`,c:'under'}:{t:`+${n}`,c:'over'};}
+function ts(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';;}
+
+// ── ESPN ──
+async function fetchESPN(){
+  const urls=[
+    'https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard',
+    'https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20260409',
+  ];
+  for(const url of urls){
+    try{
+      const r=await fetch(url);
+      if(!r.ok)continue;
+      const d=await r.json();
+      const evts=d.events||[];
+      const masters=evts.find(e=>(e.name||'').toLowerCase().includes('master'))||evts[0];
+      if(masters)return masters;
+    }catch(e){/* next */}
+  }
+  throw new Error("L'API ESPN est inaccessible depuis ce navigateur.");
+}
+
+function parseEvent(ev){
+  const comp=(ev.competitions||[])[0]||{};
+  const st=comp.status||{};
+  const round=st.period||1;
+  const sn=(st.type?.name||'').toLowerCase();
+  const isLive=sn.includes('progress')||sn==='in';
+  const isFinal=sn.includes('post')||sn.includes('final')||sn.includes('complete');
+  const players=[];
+  for(const c of(ev.competitions||[])){
+    for(const ath of(c.competitors||[])){
+      const a=ath.athlete||{};
+      const name=a.displayName||a.fullName||'';
+      if(!name)continue;
+      let stp=null;
+      const raw=ath.score??ath.displayScore??'';
+      if(raw!==''&&raw!=='--'&&raw!==null){
+        if(raw==='E'||raw==='EVEN'){stp=0;}
+        else{const n=parseInt(String(raw).replace(/[^0-9+\-]/g,''));if(!isNaN(n))stp=n;}
+      }
+      const rank=(typeof ath.sortOrder==='number'&&ath.sortOrder>0)?Math.round(ath.sortOrder):null;
+      const cf=(ath.status?.type?.name||'').toLowerCase();
+      const madeCut=cf.includes('cut')?false:(round>=3?true:null);
+      players.push({displayName:name,normName:norm(name),rank,stp,madeCut});
+    }
+  }
+  players.sort((a,b)=>(a.rank??9999)-(b.rank??9999));
+  const leader=players.find(p=>p.rank===1)||null;
+  return{players,round,isLive,isFinal,leader};
+}
+
+function match(gName,players){
+  const n=norm(gName);
+  let f=players.find(p=>p.normName===n);
+  if(f)return f;
+  const last=n.split(' ').pop();
+  if(last.length>3)f=players.find(p=>p.normName.includes(last));
+  return f||null;
+}
+
+function calcPts(player,round){
+  if(!player)return{pos:0,cut:0,total:0,x2:false,nf:true};
+  if(player.madeCut===false)return{pos:0,cut:-5,total:-5,x2:false,nf:false};
+  const m=round===4?2:1;
+  const pos=posPts(player.rank)*m;
+  const cut=(player.madeCut===true?2:0)*m;
+  return{pos,cut,total:pos+cut,x2:round===4,nf:false};
+}
+
+// ── RENDER ──
+function render(ev){
+  const{players,round,isLive,isFinal,leader}=parseEvent(ev);
+  const rn=['','Round 1','Round 2','Round 3','Round 4'][round]||`Round ${round}`;
+  document.getElementById('dot').className='dot'+(isLive?' live':isFinal?' err':'');
+  document.getElementById('sround').textContent=rn+(isLive?' · EN DIRECT':isFinal?' · TERMINÉ':'');
+  document.getElementById('stime').textContent=ts();
+
+  const results=PARTS.map(p=>{
+    let total=0;
+    const detail=p.golfers.map(g=>{
+      const ep=match(g,players);
+      const c=calcPts(ep,round);
+      total+=c.total;
+      return{name:g,ep,c};
+    });
+    const bonusOK=isFinal&&leader&&p.guess===leader.stp;
+    if(bonusOK)total+=10;
+    return{...p,total,detail,bonusOK,leaderStp:leader?.stp??null};
+  });
+  results.sort((a,b)=>b.total-a.total);
+
+  const zone=document.getElementById('pzone');
+  zone.innerHTML='';
+  results.forEach((p,idx)=>{
+    const pr=PRIZES[idx];
+    const rk=idx+1;
+    const card=document.createElement('div');
+    card.className=`pcard r${rk}`;
+    card.id='pc-'+p.id;
+
+    const rows=p.detail.map(d=>{
+      const{name,ep,c}=d;
+      if(!ep||c.nf)return`<div class="drow"><span class="dn">${name}</span><span class="dp nf">?</span><span class="ds">—</span><span class="dpt zero">0</span></div>`;
+      const s=fmtStp(ep.stp);
+      const posLbl=ep.madeCut===false?'CUT':ep.rank?`T${ep.rank}`:'—';
+      const posCls=ep.madeCut===false?'cut':ep.rank&&ep.rank<=3?'top3':'';
+      const ptsCls=c.total<0?'neg':c.total===0?'zero':'';
+      const x2=c.x2?'<sup>×2</sup>':'';
+      const sign=c.total>=0?'+':'';
+      return`<div class="drow"><span class="dn">${name}</span><span class="dp ${posCls}">${posLbl}</span><span class="ds ${s.c}">${s.t}</span><span class="dpt ${ptsCls}">${sign}${c.total}${x2}</span></div>`;
+    }).join('');
+
+    const bonusHTML=p.bonusOK
+      ?`<div class="bonus"><span>🎯 Bonus score exact vainqueur</span><span>+10 pts</span></div>`
+      :`<div class="pred">Pronostic : <strong>${p.guess}</strong>${isFinal&&p.leaderStp!==null?` · Réel : <strong>${p.leaderStp}</strong>`:''}</div>`;
+
+    card.innerHTML=`
+<div class="ptop" onclick="tog('${p.id}')">
+  <div class="rnum">${rk}</div>
+  ${pr.svg}
+  <div class="pinfo">
+    <div class="pname">${p.name}</div>
+    <div class="plabel ${pr.cls}">${pr.label}</div>
+  </div>
+  <div class="ppts">
+    <div class="ppts-n">${p.total}</div>
+    <div class="ppts-l">PTS</div>
+  </div>
+</div>
+<div class="pmid" onclick="tog('${p.id}')">
+  <span class="chev">▼ détails</span>
+</div>
+<div class="detail">
+  <div class="din">
+    <div class="dhead"><span>Joueur</span><span>Pos.</span><span>Score</span><span style="text-align:right">Pts</span></div>
+    ${rows}
+    ${bonusHTML}
+  </div>
+</div>`;
+    zone.appendChild(card);
+  });
+  if(players.length===0)setBanner("Aucun joueur trouvé dans les données ESPN. Le tournoi n'a peut-être pas encore débuté.",'binfo');
+}
+
+function tog(id){document.getElementById('pc-'+id)?.classList.toggle('open');}
+
+async function main(){
+  const btn=document.getElementById('btnR');
+  const ic=document.getElementById('btnI');
+  btn.disabled=true;
+  ic.innerHTML='<span class="sp">↻</span>';
+  setBanner(null);
+  try{
+    const ev=await fetchESPN();
+    render(ev);
+    document.getElementById('dot').className='dot live';
+  }catch(e){
+    document.getElementById('dot').className='dot err';
+    document.getElementById('sround').textContent='Erreur de connexion';
+    setBanner(`<strong>Impossible de charger ESPN.</strong><br/>${e.message}<br/><small>Vérifie ta connexion et réessaie.</small>`,'berr');
+    document.getElementById('pzone').innerHTML='';
+  }
+  btn.disabled=false;
+  ic.textContent='⛳';
+}
+
+main();
+</script>
+</body>
+</html>
