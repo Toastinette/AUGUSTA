@@ -20,17 +20,11 @@
       background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(61,122,82,.3) 0%,transparent 70%),
                  radial-gradient(ellipse 60% 40% at 90% 110%,rgba(201,168,76,.1) 0%,transparent 60%);}
     .wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 16px;}
-
-    /* HEADER */
-    header{text-align:center;padding:28px 0 16px;border-bottom:1px solid rgba(201,168,76,.2);margin-bottom:16px;position:relative;}
+    header{text-align:center;padding:28px 0 16px;border-bottom:1px solid rgba(201,168,76,.2);margin-bottom:16px;}
     .eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
     header h1{font-family:'Playfair Display',serif;font-size:clamp(28px,8vw,40px);font-weight:900;line-height:1;color:var(--txt1);}
     header h1 em{color:var(--gold);font-style:italic;}
     .hsub{font-size:11px;color:var(--txt3);margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:1.5px;}
-    .btn-settings{position:absolute;top:28px;right:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;font-size:16px;cursor:pointer;color:var(--txt2);transition:background .2s;}
-    .btn-settings:hover{background:rgba(255,255,255,.12);}
-
-    /* STATUS */
     .status-bar{display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--card-bd);border-radius:12px;padding:10px 14px;margin-bottom:12px;}
     .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#64748b;transition:background .3s;}
     .dot.live{background:#4ade80;box-shadow:0 0 8px #4ade8088;animation:blink 2s infinite;}
@@ -39,65 +33,52 @@
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
     .s-round{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);flex:1;}
     .s-time{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;white-space:nowrap;}
-
-    /* TABS */
     .tabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(0,0,0,.2);border-radius:14px;padding:4px;}
     .tab{flex:1;text-align:center;padding:8px 3px;border-radius:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.3px;color:var(--txt3);cursor:pointer;transition:all .2s;border:none;background:transparent;}
     .tab:hover{color:var(--txt2);}
     .tab.active{background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--gold);font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.3);}
     .tab.disabled{opacity:.3;cursor:not-allowed;}
-
-    /* BTN */
     .btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--g0);border:none;border-radius:var(--r);padding:14px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;box-shadow:0 6px 24px rgba(201,168,76,.3);transition:transform .15s,box-shadow .15s;}
     .btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.4);}
     .btn:active{transform:translateY(0);}
     .btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .sp{display:inline-block;animation:spin .7s linear infinite;}
-
-    /* BANNER */
     .banner{border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.55;margin-bottom:14px;}
     .berr{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
     .binfo{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold2);}
-    .bnomajor{background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.2);color:#94a3b8;text-align:center;padding:24px 16px;}
-    .bnomajor .nm-icon{font-size:40px;margin-bottom:10px;}
-    .bnomajor .nm-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--txt1);margin-bottom:6px;}
-    .bnomajor .nm-sub{font-size:12px;font-family:'DM Mono',monospace;color:var(--txt3);}
-
-    /* DAY NOTE */
+    .bnomajor{background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.2);color:#94a3b8;text-align:center;padding:32px 16px;border-radius:var(--r);}
+    .bnomajor .nm-icon{font-size:48px;margin-bottom:12px;}
+    .bnomajor .nm-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);margin-bottom:8px;}
+    .bnomajor .nm-sub{font-size:12px;font-family:'DM Mono',monospace;color:var(--txt3);line-height:1.8;}
     .day-note{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);text-align:center;margin-bottom:12px;}
     .day-note strong{color:var(--gold2);}
-
-    /* CARDS */
     .podium{display:flex;flex-direction:column;gap:12px;}
     .pcard{background:var(--card-bg);border:1px solid var(--card-bd);border-radius:var(--r);overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer;}
     .pcard:hover{transform:translateY(-2px);}
     .pcard.r1{border-color:rgba(201,168,76,.45);background:rgba(201,168,76,.07);}
     .pcard.r2{border-color:rgba(178,190,210,.3);}
     .pcard.r3{border-color:rgba(180,90,70,.3);}
-
     .ptop{display:flex;align-items:center;gap:12px;padding:16px 18px 0;}
     .rnum{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;min-width:28px;text-align:center;line-height:1;}
-    .r1 .rnum{color:var(--gold);} .r2 .rnum{color:#b2bed2;} .r3 .rnum{color:#c47858;}
+    .r1 .rnum{color:var(--gold);}.r2 .rnum{color:#b2bed2;}.r3 .rnum{color:#c47858;}
     .ppx{image-rendering:pixelated;display:block;flex-shrink:0;}
     .pinfo{flex:1;min-width:0;}
     .pname{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);line-height:1.1;}
     .plabel{font-size:11px;color:var(--txt3);margin-top:3px;font-family:'DM Mono',monospace;}
-    .plabel.c1{color:var(--gold2);} .plabel.c2{color:#d4839a;} .plabel.c3{color:#d4957a;}
+    .plabel.c1{color:var(--gold2);}.plabel.c2{color:#d4839a;}.plabel.c3{color:#d4957a;}
     .ppts{text-align:right;flex-shrink:0;}
     .ppts-n{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--txt1);line-height:1;}
     .ppts-l{font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);letter-spacing:1.5px;margin-top:2px;}
     .pmid{padding:6px 18px 14px;display:flex;align-items:center;justify-content:flex-end;}
     .chev{font-size:11px;color:var(--txt3);transition:transform .3s;font-family:'DM Mono',monospace;}
     .pcard.open .chev{transform:rotate(180deg);}
-
-    /* DETAIL */
     .detail{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
     .pcard.open .detail{max-height:900px;}
     .din{border-top:1px solid rgba(255,255,255,.07);padding:14px 18px 18px;}
     .dhead{display:grid;grid-template-columns:1fr 54px 46px 60px;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
     .dhead span{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-family:'DM Mono',monospace;}
-    .dhead span:nth-child(n+2){text-align:center;} .dhead span:last-child{text-align:right;}
+    .dhead span:nth-child(n+2){text-align:center;}.dhead span:last-child{text-align:right;}
     .drow{display:grid;grid-template-columns:1fr 54px 46px 60px;gap:6px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
     .drow:last-child{border-bottom:none;}
     .dn{font-size:13px;font-weight:500;color:var(--txt1);}
@@ -106,9 +87,9 @@
     .dp.top3{background:rgba(201,168,76,.22);color:var(--gold2);}
     .dp.nf{background:rgba(100,116,139,.15);color:#94a3b8;}
     .ds{font-family:'DM Mono',monospace;font-size:12px;text-align:center;}
-    .ds.under{color:#4ade80;} .ds.over{color:#f87171;} .ds.even{color:var(--cream2);}
+    .ds.under{color:#4ade80;}.ds.over{color:#f87171;}.ds.even{color:var(--cream2);}
     .dpt{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;text-align:right;color:var(--gold);}
-    .dpt.neg{color:#f87171;} .dpt.zero{color:var(--txt3);}
+    .dpt.neg{color:#f87171;}.dpt.zero{color:var(--txt3);}
     .dpt-detail{font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;text-align:right;margin-top:2px;}
     .bonus-row{margin-top:10px;padding:9px 12px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;display:flex;justify-content:space-between;align-items:center;}
     .bonus-row span:first-child{font-size:12px;color:#86efac;font-family:'DM Mono',monospace;}
@@ -116,76 +97,29 @@
     .pred{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);margin-top:10px;}
     .pred strong{color:var(--cream2);}
     .x2b{display:inline-block;background:rgba(201,168,76,.2);color:var(--gold2);font-size:9px;border-radius:4px;padding:1px 4px;margin-left:3px;font-family:'DM Mono',monospace;vertical-align:middle;}
-
-    /* FROZEN BADGE */
     .frozen-badge{display:inline-block;background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.25);color:#94a3b8;font-size:9px;border-radius:4px;padding:1px 5px;margin-left:4px;font-family:'DM Mono',monospace;vertical-align:middle;}
-
-    /* SKELETON */
     .skel{height:90px;border-radius:var(--r);background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 100%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;}
     @keyframes shimmer{to{background-position:-200% 0}}
-
-    /* MODAL OVERLAY */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:flex-end;justify-content:center;}
-    .modal-overlay.open{display:flex;}
-    .modal{background:#1a2e20;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:24px 20px 40px;}
-    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-    .modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);}
-    .modal-close{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 10px;color:var(--txt2);cursor:pointer;font-size:16px;}
-    .modal-close:hover{background:rgba(255,255,255,.14);}
-
-    /* PARTICIPANT FORM */
-    .part-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
-    .part-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;}
-    .part-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-    .part-item-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--txt1);}
-    .part-actions{display:flex;gap:6px;}
-    .btn-edit,.btn-del{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--txt2);font-family:'DM Mono',monospace;}
-    .btn-del{color:#f87171;border-color:rgba(239,68,68,.2);}
-    .btn-edit:hover{background:rgba(255,255,255,.12);} .btn-del:hover{background:rgba(239,68,68,.1);}
-    .part-golfers{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);line-height:1.8;}
-    .part-guess{font-size:11px;font-family:'DM Mono',monospace;color:var(--gold2);margin-top:4px;}
-
-    /* FORM */
-    .form-section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;}
-    .form-title{font-size:13px;font-family:'DM Mono',monospace;color:var(--gold2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
-    .form-group{margin-bottom:12px;}
-    .form-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);letter-spacing:.5px;margin-bottom:5px;display:block;}
-    .form-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--txt1);outline:none;transition:border-color .2s;}
-    .form-input:focus{border-color:rgba(201,168,76,.4);}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-    .btn-save{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--g0);border:none;border-radius:12px;padding:12px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;margin-top:14px;}
-    .btn-save:hover{opacity:.9;}
-    .btn-add-part{width:100%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);cursor:pointer;margin-bottom:16px;}
-    .btn-add-part:hover{background:rgba(201,168,76,.16);}
-
-    /* RESET TOURNAMENT */
-    .danger-zone{margin-top:20px;padding:14px 16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:12px;}
-    .danger-title{font-size:11px;font-family:'DM Mono',monospace;color:#f87171;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-    .btn-reset{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:12px;color:#f87171;cursor:pointer;}
-    .btn-reset:hover{background:rgba(239,68,68,.25);}
-
+    .sync-indicator{text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);margin-bottom:8px;}
+    .sync-indicator.synced{color:#4ade80;}
     footer{text-align:center;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);line-height:2;}
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow" id="headerEyebrow">Augusta National · 2026</div>
+    <div class="eyebrow" id="headerEyebrow">2026 · Le Pari</div>
     <h1 id="headerTitle">Majeurs<br/><em>Le Pari</em></h1>
-    <div class="hsub" id="headerSub">— · — · —</div>
-    <button class="btn-settings" onclick="openSettings()" title="Gérer les participants">⚙️</button>
+    <div class="hsub" id="headerSub">Chargement...</div>
   </header>
 
   <div class="status-bar">
     <div class="dot idle" id="dot"></div>
-    <div class="s-round" id="sround">Chargement...</div>
+    <div class="s-round" id="sround">Connexion...</div>
     <div class="s-time" id="stime">—</div>
   </div>
 
-  <button class="btn" id="btnR" onclick="main()">
-    <span id="btnI">⛳</span>
-    <span>Actualiser les scores</span>
-  </button>
+  <div class="sync-indicator" id="syncIndicator">⏳ Synchronisation Firebase...</div>
 
   <div class="tabs" id="tabs" style="display:none"></div>
   <div id="bzone"></div>
@@ -194,68 +128,34 @@
     <div class="skel"></div><div class="skel"></div><div class="skel"></div>
   </div>
 
-  <footer id="footer">Données ESPN · Majeurs Golf · Paris entre amis</footer>
+  <footer>MajorBet · Données ESPN + Firebase · Paris entre amis</footer>
 </div>
 
-<!-- MODAL SETTINGS -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeSettingsIfOutside(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-title">⚙️ Participants</div>
-      <button class="modal-close" onclick="closeSettings()">✕</button>
-    </div>
-
-    <div class="part-list" id="partList"></div>
-    <button class="btn-add-part" onclick="showForm()">+ Ajouter un participant</button>
-
-    <div class="form-section" id="formSection" style="display:none">
-      <div class="form-title" id="formTitle">Nouveau participant</div>
-      <input type="hidden" id="editId"/>
-      <div class="form-group">
-        <label class="form-label">Prénom</label>
-        <input class="form-input" id="fName" placeholder="Ex: Morgan" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Joueur 1</label>
-        <input class="form-input" id="fG1" placeholder="Ex: Justin Rose" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Joueur 2</label>
-        <input class="form-input" id="fG2" placeholder="Ex: Shane Lowry" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Joueur 3</label>
-        <input class="form-input" id="fG3" placeholder="Ex: Tommy Fleetwood" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Joueur 4 (hors-européen)</label>
-        <input class="form-input" id="fG4" placeholder="Ex: Jason Day" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Pronostic score vainqueur</label>
-        <input class="form-input" id="fGuess" type="number" placeholder="Ex: -11" autocomplete="off"/>
-      </div>
-      <button class="btn-save" onclick="savePart()">💾 Enregistrer</button>
-    </div>
-
-    <div class="danger-zone">
-      <div class="danger-title">⚠️ Zone de réinitialisation</div>
-      <p style="font-size:12px;color:#94a3b8;font-family:'DM Mono',monospace;margin-bottom:10px;">Efface tous les scores figés des rounds précédents (nouveau Majeur).</p>
-      <button class="btn-reset" onclick="resetTournament()">🗑️ Nouveau tournoi</button>
-    </div>
-  </div>
-</div>
-
-<script>
+<script type="module">
 // ══════════════════════════════════════════════════════
-//  CONSTANTS
+//  FIREBASE CONFIG
 // ══════════════════════════════════════════════════════
-const STORAGE_KEY  = 'golf_pari_participants_v2';
-const FROZEN_KEY   = 'golf_pari_frozen_v2';       // points figés par round
-const MAJOR_NAMES  = ['masters','pga championship','u.s. open','us open','the open championship','open championship'];
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getFirestore,doc,getDoc,setDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-const POS_TABLE    = [{m:1,p:25},{m:2,p:18},{m:3,p:12},{m:10,p:0},{m:20,p:0},{m:30,p:0}];
-const PALIER_TABLE = [{m:10,p:8},{m:20,p:5},{m:30,p:3}];
+const firebaseConfig={
+  apiKey:"AIzaSyDG5eeQ3R8lVBe-XFsJuUv82JynPlYzps8",
+  authDomain:"majorbet-31fc4.firebaseapp.com",
+  projectId:"majorbet-31fc4",
+  storageBucket:"majorbet-31fc4.firebasestorage.app",
+  messagingSenderId:"564235778775",
+  appId:"1:564235778775:web:f0edbd914c5fcd7dc34e92"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+// ══════════════════════════════════════════════════════
+//  CONSTANTES
+// ══════════════════════════════════════════════════════
+const MAJOR_NAMES=['masters','pga championship','u.s. open','us open','the open championship','open championship'];
+const POS_TABLE=[{m:1,p:25},{m:2,p:18},{m:3,p:12},{m:10,p:0},{m:20,p:0},{m:30,p:0}];
+const PALIER_TABLE=[{m:10,p:8},{m:20,p:5},{m:30,p:3}];
 
 function posPts(r){if(!r||r<1)return 0;for(const x of POS_TABLE)if(r<=x.m)return x.p;return 0;}
 function palierPts(r){if(!r||r<1)return 0;for(const x of PALIER_TABLE)if(r<=x.m)return x.p;return 0;}
@@ -274,59 +174,80 @@ const PRIZES=[
 ];
 
 // ══════════════════════════════════════════════════════
-//  PARTICIPANTS (localStorage)
-// ══════════════════════════════════════════════════════
-const DEFAULT_PARTS=[
-  {id:'morgan',  name:'Morgan',  golfers:['Justin Rose','Shane Lowry','Tommy Fleetwood','Jason Day'], guess:-11},
-  {id:'baptiste',name:'Baptiste',golfers:['Rory McIlroy','Tommy Fleetwood','Ludvig Åberg','Max Homa'], guess:-12},
-  {id:'chris',   name:'Chris',   golfers:['Matt Fitzpatrick','Rory McIlroy','Ludvig Åberg','Xander Schauffele'], guess:-17}
-];
-
-function loadParts(){
-  try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):DEFAULT_PARTS;}
-  catch(e){return DEFAULT_PARTS;}
-}
-function saveParts(parts){localStorage.setItem(STORAGE_KEY,JSON.stringify(parts));}
-
-// ══════════════════════════════════════════════════════
-//  FROZEN SCORES (localStorage)
-//  Structure: { tournamentKey: { roundNum: { participantId: points } } }
-//  tournamentKey = lowercase tournament name e.g. "masters"
-// ══════════════════════════════════════════════════════
-function loadFrozen(){
-  try{const s=localStorage.getItem(FROZEN_KEY);return s?JSON.parse(s):{};} catch(e){return {};}
-}
-function saveFrozen(f){localStorage.setItem(FROZEN_KEY,JSON.stringify(f));}
-
-function getFrozenRound(tournKey,roundNum){
-  const f=loadFrozen();
-  return f[tournKey]?.[roundNum]||null; // null = pas encore figé
-}
-
-function freezeRound(tournKey,roundNum,pointsByPart){
-  // pointsByPart = { partId: totalPtsThisRound }
-  const f=loadFrozen();
-  if(!f[tournKey])f[tournKey]={};
-  f[tournKey][roundNum]=pointsByPart;
-  saveFrozen(f);
-}
-
-function resetTournamentData(){
-  // Efface uniquement les scores figés (pas les participants)
-  localStorage.removeItem(FROZEN_KEY);
-}
-
-// ══════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').trim();}
 function fmtStp(n){if(n===null||n===undefined)return{t:'—',c:''};if(n===0)return{t:'E',c:'even'};return n<0?{t:`${n}`,c:'under'}:{t:`+${n}`,c:'over'};}
 function ts(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
-function uid(){return Math.random().toString(36).slice(2,9);}
-function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';;}
+function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';}
 
 // ══════════════════════════════════════════════════════
-//  ESPN FETCH — filtre uniquement les Majeurs
+//  FIREBASE : lecture participants + scores figés
+// ══════════════════════════════════════════════════════
+let gParticipants=[];
+let gFrozenRounds={};  // { "masters_2026": { 1: {morganId: pts, ...}, 2: {...} } }
+let gTournKey='';
+
+async function loadFromFirebase(){
+  try{
+    // Participants
+    const partDoc=await getDoc(doc(db,'config','participants'));
+    if(partDoc.exists()){
+      gParticipants=partDoc.data().list||[];
+    }else{
+      // Participants par défaut si Firebase vide
+      gParticipants=[
+        {id:'morgan',  name:'Morgan',  golfers:['Justin Rose','Shane Lowry','Tommy Fleetwood','Jason Day'], guess:-11},
+        {id:'baptiste',name:'Baptiste',golfers:['Rory McIlroy','Tommy Fleetwood','Ludvig Åberg','Max Homa'], guess:-12},
+        {id:'chris',   name:'Chris',   golfers:['Matt Fitzpatrick','Rory McIlroy','Ludvig Åberg','Xander Schauffele'], guess:-17}
+      ];
+    }
+
+    // Scores figés
+    const frozenDoc=await getDoc(doc(db,'config','frozenRounds'));
+    if(frozenDoc.exists()){
+      gFrozenRounds=frozenDoc.data()||{};
+    }
+
+    updateHeaderNames();
+    document.getElementById('syncIndicator').textContent='✅ Synchronisé Firebase';
+    document.getElementById('syncIndicator').className='sync-indicator synced';
+  }catch(e){
+    console.error('Firebase load error:',e);
+    document.getElementById('syncIndicator').textContent='⚠️ Firebase hors ligne — mode local';
+  }
+}
+
+async function saveFrozenToFirebase(tournKey,roundNum,pointsByGolfer){
+  try{
+    if(!gFrozenRounds[tournKey])gFrozenRounds[tournKey]={};
+    gFrozenRounds[tournKey][roundNum]=pointsByGolfer;
+    await setDoc(doc(db,'config','frozenRounds'),gFrozenRounds);
+    console.log(`Round ${roundNum} figé dans Firebase pour ${tournKey}`);
+  }catch(e){
+    console.error('Firebase save error:',e);
+  }
+}
+
+// Écoute en temps réel les changements de participants et scores figés
+function listenFirebase(){
+  onSnapshot(doc(db,'config','participants'),(snap)=>{
+    if(snap.exists()){
+      gParticipants=snap.data().list||[];
+      updateHeaderNames();
+      if(gParsed)renderPodium(gParsed);
+    }
+  });
+  onSnapshot(doc(db,'config','frozenRounds'),(snap)=>{
+    if(snap.exists()){
+      gFrozenRounds=snap.data()||{};
+      if(gParsed)renderPodium(gParsed);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  ESPN FETCH — uniquement les Majeurs
 // ══════════════════════════════════════════════════════
 async function fetchESPN(){
   const urls=[
@@ -339,18 +260,16 @@ async function fetchESPN(){
       if(!r.ok)continue;
       const d=await r.json();
       const evts=d.events||[];
-      // Cherche uniquement un Majeur
       const major=evts.find(e=>MAJOR_NAMES.some(m=>norm(e.name||'').includes(m)));
       if(major)return{event:major,found:true};
-      // Aucun Majeur trouvé
       return{event:null,found:false};
-    }catch(e){/* try next url */}
+    }catch(e){/* next */}
   }
-  throw new Error("L'API ESPN est inaccessible depuis ce navigateur.");
+  throw new Error("L'API ESPN est inaccessible.");
 }
 
 // ══════════════════════════════════════════════════════
-//  PARSE EVENT
+//  PARSE
 // ══════════════════════════════════════════════════════
 function parseScoreStr(raw){
   if(raw===null||raw===undefined||raw==='')return null;
@@ -368,7 +287,9 @@ function parseEvent(ev){
   const sn=(st.type?.name||'').toLowerCase();
   const isLive=sn.includes('progress')||sn==='in';
   const isFinal=(sn.includes('post')||sn.includes('final')||sn.includes('complete'))&&currentRound===4;
-  const tournKey=MAJOR_NAMES.find(m=>norm(ev.name||'').includes(m))||'unknown';
+  const year=new Date().getFullYear();
+  const majorKey=MAJOR_NAMES.find(m=>norm(ev.name||'').includes(m))||'unknown';
+  const tournKey=`${majorKey}_${year}`;
 
   const raw=[];
   for(const c of(ev.competitions||[])){
@@ -376,49 +297,38 @@ function parseEvent(ev){
       const a=ath.athlete||{};
       const name=a.displayName||a.fullName||'';
       if(!name)continue;
-
-      // Score cumulé
       let stpTotal=null;
       for(const cand of[ath.score,ath.displayScore]){
-        const v=parseScoreStr(cand);
-        if(v!==null){stpTotal=v;break;}
+        const v=parseScoreStr(cand);if(v!==null){stpTotal=v;break;}
       }
-
-      // Scores par round (linescores) — utilisés UNIQUEMENT pour le bonus score du jour
       const ls=ath.linescores||[];
       const roundScores={};
       ls.forEach((l,i)=>{
         const v=parseScoreStr(l.displayValue??l.value??null);
         if(v!==null)roundScores[i+1]=v;
       });
-
-      // Cut
-      const sName=(ath.status?.type?.name||ath.status?.type?.description||'').toLowerCase();
+      const sName=(ath.status?.type?.name||'').toLowerCase();
       const sShort=(ath.status?.type?.shortDetail||'').toLowerCase();
       const isCut=sName.includes('cut')||sShort.includes('cut')||sName==='wd'||sName==='dq';
       const madeCut=isCut?false:(currentRound>=3?true:null);
-
       raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,madeCut,rank:null});
     }
   }
 
-  // Classement UNIQUE : rang cumulé basé sur scores distincts
   const active=raw.filter(p=>p.madeCut!==false&&p.stpTotal!==null);
   const cut=raw.filter(p=>p.madeCut===false);
   const noScore=raw.filter(p=>p.madeCut!==false&&p.stpTotal===null);
-
   active.sort((a,b)=>a.stpTotal-b.stpTotal);
-  const distinctTotal=[...new Set(active.map(p=>p.stpTotal))].sort((a,b)=>a-b);
-  for(const p of active)p.rank=distinctTotal.indexOf(p.stpTotal)+1;
+  const distinct=[...new Set(active.map(p=>p.stpTotal))].sort((a,b)=>a-b);
+  for(const p of active)p.rank=distinct.indexOf(p.stpTotal)+1;
 
   const allPlayers=[...active,...noScore,...cut];
-  const leader=active.length>0?active[0]:null;
-
-  return{players:allPlayers,currentRound,isLive,isFinal,leader,tournKey};
+  const leader=active[0]||null;
+  return{players:allPlayers,currentRound,isLive,isFinal,leader,tournKey,eventName:ev.name||''};
 }
 
 // ══════════════════════════════════════════════════════
-//  CALCUL DES POINTS
+//  POINTS
 // ══════════════════════════════════════════════════════
 function calcPtsForRound(player,roundNum){
   if(!player)return{pts:0,nf:true};
@@ -426,19 +336,16 @@ function calcPtsForRound(player,roundNum){
   if(rank===undefined||rank===null)return{pts:0,nf:false,noData:true};
   const score=player.roundScores[roundNum];
   if(score===undefined)return{pts:0,nf:false,noData:true};
-  const isR4=roundNum===4;
-  const mult=isR4?2:1;
+  const mult=roundNum===4?2:1;
   const rankPts=totalRankPts(rank);
-  const scorePts=score!==null?-score:0;  // -(-7)=+7 / -(+3)=-3
+  const scorePts=-score;  // -(-7)=+7 / -(+3)=-3
   const pts=(rankPts+scorePts)*mult;
   return{pts,rankPts,scorePts,rank,score,mult,nf:false};
 }
 
 function calcCutBonus(player){
   if(!player)return 0;
-  if(player.madeCut===false)return -5;
-  if(player.madeCut===true)return 2;
-  return 0;
+  return player.madeCut===false?-5:player.madeCut===true?2:0;
 }
 
 function matchPlayer(gName,players){
@@ -451,44 +358,27 @@ function matchPlayer(gName,players){
 }
 
 // ══════════════════════════════════════════════════════
-//  FREEZE LOGIC
-//  Quand un round est terminé (ESPN indique complete pour ce round),
-//  on fige automatiquement les points et on ne les recalcule plus.
+//  AUTO-FREEZE : fige automatiquement les rounds terminés dans Firebase
 // ══════════════════════════════════════════════════════
-function computeRoundPoints(parts,players,roundNum){
-  // Retourne { partId: pts } pour ce round uniquement
-  const result={};
-  for(const part of parts){
-    let total=0;
-    for(const g of part.golfers){
-      const ep=matchPlayer(g,players);
-      const c=calcPtsForRound(ep,roundNum);
-      if(!c.nf&&!c.noData)total+=c.pts;
-    }
-    result[part.id]=total;
-  }
-  return result;
-}
-
-function autoFreezeCompletedRounds(parsed,parts){
-  // Fige automatiquement les rounds dont ESPN dit qu'ils sont terminés
-  // On considère un round r terminé si currentRound > r (le round suivant a commencé)
-  // ou si isFinal et r === currentRound
+async function autoFreezeCompletedRounds(parsed){
   const{players,currentRound,isFinal,tournKey}=parsed;
-  const frozen=loadFrozen();
+  const frozen=gFrozenRounds[tournKey]||{};
 
   for(let r=1;r<=4;r++){
     const isRoundDone=(r<currentRound)||(isFinal&&r===currentRound);
     if(!isRoundDone)continue;
-    // Déjà figé ?
-    if(frozen[tournKey]?.[r])continue;
-    // Figer
-    const pts=computeRoundPoints(parts,players,r);
-    if(!frozen[tournKey])frozen[tournKey]={};
-    frozen[tournKey][r]=pts;
-    console.log(`Round ${r} figé pour ${tournKey}:`,pts);
+    if(frozen[r])continue; // déjà figé
+
+    // Calcule les points par joueur pour ce round
+    const pointsByPlayer={};
+    for(const ep of players){
+      const c=calcPtsForRound(ep,r);
+      if(!c.nf&&!c.noData){
+        pointsByPlayer[ep.normName]={pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score};
+      }
+    }
+    await saveFrozenToFirebase(tournKey,r,pointsByPlayer);
   }
-  saveFrozen(frozen);
 }
 
 // ══════════════════════════════════════════════════════
@@ -503,7 +393,7 @@ let gActiveTab='total';
 function renderTabs(currentRound,tournKey){
   const tabsEl=document.getElementById('tabs');
   tabsEl.style.display='flex';
-  const frozen=loadFrozen();
+  const frozen=gFrozenRounds[tournKey]||{};
   const items=[
     {id:'total',label:'TOTAL'},
     {id:'r1',label:'JOUR 1'},
@@ -514,69 +404,73 @@ function renderTabs(currentRound,tournKey){
   tabsEl.innerHTML=items.map(t=>{
     const rNum=t.id==='total'?0:parseInt(t.id.replace('r',''));
     const disabled=rNum>currentRound;
-    const isFroz=rNum>0&&frozen[tournKey]?.[rNum];
+    const isFroz=rNum>0&&frozen[rNum];
     const active=t.id===gActiveTab;
     const lbl=isFroz?`${t.label}🔒`:t.label;
-    return`<button class="tab${active?' active':''}${disabled?' disabled':''}" ${disabled?'':'onclick="setTab(\''+t.id+'\')"'}>${lbl}</button>`;
+    return`<button class="tab${active?' active':''}${disabled?' disabled':''}" ${disabled?'':'onclick="window.setTab(\''+t.id+'\')"'}>${lbl}</button>`;
   }).join('');
 }
 
-function setTab(id){
+window.setTab=function(id){
   gActiveTab=id;
   if(gParsed)renderPodium(gParsed);
-}
+};
+
+window.tog=function(id){
+  document.getElementById('pc-'+id)?.classList.toggle('open');
+};
 
 // ══════════════════════════════════════════════════════
 //  RENDER PODIUM
 // ══════════════════════════════════════════════════════
 function renderPodium(parsed){
   const{players,currentRound,isLive,isFinal,leader,tournKey}=parsed;
-  const parts=loadParts();
+  const parts=gParticipants;
+  if(!parts||parts.length===0){
+    document.getElementById('pzone').innerHTML=`<div class="banner binfo">Aucun participant configuré. Utilise le configurateur pour ajouter des participants.</div>`;
+    return;
+  }
 
   renderTabs(currentRound,tournKey);
 
   const dayNote=document.getElementById('daynote');
   const isTotal=gActiveTab==='total';
   const roundNum=isTotal?null:parseInt(gActiveTab.replace('r',''));
-
-  const frozen=loadFrozen();
+  const frozen=gFrozenRounds[tournKey]||{};
 
   if(isTotal){
     dayNote.style.display='none';
   }else{
     dayNote.style.display='block';
     const rNames=['','Round 1','Round 2','Round 3','Round 4'];
-    const isFroz=frozen[tournKey]?.[roundNum];
-    const mult=roundNum===4?' · <strong>×2</strong>':'';
-    const frozNote=isFroz?' · <span style="color:#94a3b8">figé 🔒</span>':'';
-    dayNote.innerHTML=`${rNames[roundNum]}${mult}${frozNote}`;
+    const isFroz=frozen[roundNum];
+    const multNote=roundNum===4?' · <strong>×2</strong>':'';
+    const frozNote=isFroz?' · <span style="color:#94a3b8">figé 🔒</span>':'· live';
+    dayNote.innerHTML=`${rNames[roundNum]}${multNote} ${frozNote}`;
   }
 
-  // Calcul des points pour chaque participant
   const results=parts.map(part=>{
     let total=0;
     const detail=part.golfers.map(g=>{
       const ep=matchPlayer(g,players);
 
       if(isTotal){
-        // Somme de tous les rounds : figés si disponibles, sinon recalcul live
         let sumPts=0;
         const byRound=[];
         for(let r=1;r<=currentRound;r++){
-          const frozRound=frozen[tournKey]?.[r];
+          const frozRound=frozen[r];
           if(frozRound){
-            // Round figé : utilise les points stockés divisés par nb de golfers
-            // On recalcule par golfer depuis le frozen global du participant
-            // (On stocke par participant, pas par golfer — on recalcule ici)
-            const c=calcPtsForRound(ep,r);
-            const pts=(!c.nf&&!c.noData)?c.pts:0;
+            // Round figé : utilise les données stockées dans Firebase
+            const epNorm=ep?ep.normName:'';
+            const fd=frozRound[epNorm];
+            const pts=fd?fd.pts:0;
             byRound.push({r,pts,frozen:true,mult:r===4?2:1});
             sumPts+=pts;
           }else{
-            // Round en cours : calcul live
+            // Round live
             const c=calcPtsForRound(ep,r);
             if(!c.nf&&!c.noData){
-              byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score,mult:c.mult,frozen:false});
+              byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,frozen:false,mult:c.mult});
               sumPts+=c.pts;
             }
           }
@@ -587,15 +481,14 @@ function renderPodium(parsed){
         return{name:g,ep,sumPts,byRound,cutBonus,isTotal:true};
 
       }else{
-        // Vue par round : figé ou live
-        const frozRound=frozen[tournKey]?.[roundNum];
-        let pts=0;
-        let isFrozenData=false;
-        let c=null;
+        const frozRound=frozen[roundNum];
+        let pts=0,c=null,isFrozenData=false;
         if(frozRound){
-          // Recalcule quand même les points individuels du joueur pour l'affichage
-          c=calcPtsForRound(ep,roundNum);
-          pts=(!c.nf&&!c.noData)?c.pts:0;
+          const epNorm=ep?ep.normName:'';
+          const fd=frozRound[epNorm];
+          pts=fd?fd.pts:0;
+          // Reconstruit c pour l'affichage
+          c={pts,rankPts:fd?.rankPts,scorePts:fd?.scorePts,rank:fd?.rank,score:fd?.score,mult:roundNum===4?2:1,nf:false};
           isFrozenData=true;
         }else{
           c=calcPtsForRound(ep,roundNum);
@@ -606,10 +499,8 @@ function renderPodium(parsed){
       }
     });
 
-    // Bonus score exact vainqueur : uniquement tournoi terminé (R4 final)
     const bonusOK=isTotal&&isFinal&&leader&&part.guess===leader.stpTotal;
     if(bonusOK)total+=10;
-
     return{...part,total,detail,bonusOK,leaderStp:leader?.stpTotal??null};
   });
 
@@ -656,7 +547,7 @@ function renderPodium(parsed){
         const ptsCls=d.pts<0?'neg':d.pts===0?'zero':'';
         const sign=d.pts>=0?'+':'';
         const x2=d.mult===2?'<span class="x2b">×2</span>':'';
-        const frozIcon=d.frozen?'<span class="frozen-badge">🔒figé</span>':'';
+        const frozIcon=d.frozen?'<span class="frozen-badge">🔒</span>':'';
         const rankPtsDisp=d.rankPts!==undefined?d.rankPts:null;
         const scorePtsDisp=d.scorePts!==undefined?d.scorePts:null;
         const detailSub=(rankPtsDisp!==null&&scorePtsDisp!==null)
@@ -675,17 +566,14 @@ function renderPodium(parsed){
 
     let extraHTML='';
     if(isTotal){
-      if(p.bonusOK){
-        extraHTML=`<div class="bonus-row"><span>🎯 Bonus score exact vainqueur</span><span>+10 pts</span></div>`;
-      }else{
-        extraHTML=`<div class="pred">Pronostic : <strong>${p.guess}</strong>${isFinal&&p.leaderStp!==null?` · Réel : <strong>${p.leaderStp}</strong>`:''}</div>`;
-      }
+      extraHTML=p.bonusOK
+        ?`<div class="bonus-row"><span>🎯 Bonus score exact vainqueur</span><span>+10 pts</span></div>`
+        :`<div class="pred">Pronostic : <strong>${p.guess}</strong>${isFinal&&p.leaderStp!==null?` · Réel : <strong>${p.leaderStp}</strong>`:''}</div>`;
     }
 
     card.innerHTML=`
 <div class="ptop" onclick="tog('${p.id}')">
-  <div class="rnum">${rk}</div>
-  ${pr.svg}
+  <div class="rnum">${rk}</div>${pr.svg}
   <div class="pinfo">
     <div class="pname">${p.name}</div>
     <div class="plabel ${pr.cls}">${isTotal?pr.label:(roundNum===4?'<span class="x2b">×2</span> points doublés':'Points du round')}</div>
@@ -698,81 +586,49 @@ function renderPodium(parsed){
 <div class="pmid" onclick="tog('${p.id}')">
   <span class="chev">▼ détails joueurs</span>
 </div>
-<div class="detail">
-  <div class="din">
-    <div class="dhead">
-      <span>Joueur</span><span>Rang</span>
-      <span>${isTotal?'Cumulé':'Score J.'}</span>
-      <span style="text-align:right">Pts</span>
-    </div>
-    ${rows}
-    ${extraHTML}
+<div class="detail"><div class="din">
+  <div class="dhead">
+    <span>Joueur</span><span>Rang</span>
+    <span>${isTotal?'Cumulé':'Score J.'}</span>
+    <span style="text-align:right">Pts</span>
   </div>
-</div>`;
+  ${rows}${extraHTML}
+</div></div>`;
     zone.appendChild(card);
   });
-
-  if(players.length===0)setBanner("Aucun joueur trouvé dans les données ESPN.",'binfo');
 }
 
-function tog(id){document.getElementById('pc-'+id)?.classList.toggle('open');}
-
 // ══════════════════════════════════════════════════════
-//  HEADER UPDATE
+//  HEADER
 // ══════════════════════════════════════════════════════
-function updateHeader(eventName,parts){
-  const names={
+function updateHeader(eventName){
+  const map={
     'masters':'Masters Tournament',
     'pga championship':'PGA Championship',
-    'u.s. open':'U.S. Open',
-    'us open':'U.S. Open',
-    'the open championship':'The Open Championship',
-    'open championship':'The Open Championship'
+    'u.s. open':'U.S. Open','us open':'U.S. Open',
+    'the open championship':'The Open Championship','open championship':'The Open Championship'
   };
   const key=MAJOR_NAMES.find(m=>norm(eventName||'').includes(m));
-  const title=names[key]||'Majeurs';
-  document.getElementById('headerEyebrow').textContent=new Date().getFullYear()+' · Le Pari';
-  document.getElementById('headerTitle').innerHTML=`${title.split(' ').slice(0,1).join(' ')}<br/><em>${title.split(' ').slice(1).join(' ')||'Le Pari'}</em>`;
-  document.getElementById('headerSub').textContent=parts.map(p=>p.name.toUpperCase()).join(' · ');
+  const title=map[key]||'Majeurs';
+  const words=title.split(' ');
+  document.getElementById('headerTitle').innerHTML=`${words[0]}<br/><em>${words.slice(1).join(' ')}</em>`;
+  document.getElementById('headerEyebrow').textContent=`${new Date().getFullYear()} · Le Pari`;
+}
+
+function updateHeaderNames(){
+  const names=gParticipants.map(p=>p.name.toUpperCase()).join(' · ');
+  document.getElementById('headerSub').textContent=names||'—';
 }
 
 // ══════════════════════════════════════════════════════
-//  MAIN RENDER
+//  MAIN LOOP (auto-refresh toutes les 90 secondes)
 // ══════════════════════════════════════════════════════
-function render(ev){
-  const parts=loadParts();
-  const parsed=parseEvent(ev);
-  gParsed=parsed;
+let refreshTimer=null;
 
-  const{currentRound,isLive,isFinal,tournKey}=parsed;
-
-  // Auto-freeze les rounds terminés
-  autoFreezeCompletedRounds(parsed,parts);
-
-  const rn=['','Round 1','Round 2','Round 3','Round 4'][currentRound]||`Round ${currentRound}`;
-  document.getElementById('dot').className='dot'+(isLive?' live':isFinal?' idle':'');
-  document.getElementById('sround').textContent=rn+(isLive?' · EN DIRECT':isFinal?' · TERMINÉ':'');
-  document.getElementById('stime').textContent=ts();
-
-  updateHeader(ev.name,parts);
-  renderPodium(parsed);
-}
-
-// ══════════════════════════════════════════════════════
-//  MAIN FETCH
-// ══════════════════════════════════════════════════════
-async function main(){
-  const btn=document.getElementById('btnR');
-  const ic=document.getElementById('btnI');
-  btn.disabled=true;
-  ic.innerHTML='<span class="sp">↻</span>';
-  setBanner(null);
-
+async function fetchAndRender(){
   try{
     const{event,found}=await fetchESPN();
-
     if(!found||!event){
-      // Aucun Majeur en cours
       document.getElementById('dot').className='dot idle';
       document.getElementById('sround').textContent='Aucun Majeur en cours';
       document.getElementById('stime').textContent=ts();
@@ -782,126 +638,47 @@ async function main(){
         <div class="bnomajor">
           <div class="nm-icon">⛳</div>
           <div class="nm-title">Aucun Majeur en cours</div>
-          <div class="nm-sub">Revenez lors du prochain Majeur :<br/>Masters · PGA Championship · U.S. Open · The Open</div>
+          <div class="nm-sub">Masters · PGA Championship<br/>U.S. Open · The Open Championship</div>
         </div>`;
       return;
     }
 
-    render(event);
-    document.getElementById('dot').className='dot live';
+    const parsed=parseEvent(event);
+    gParsed=parsed;
+    gTournKey=parsed.tournKey;
+
+    // Auto-freeze rounds terminés dans Firebase
+    await autoFreezeCompletedRounds(parsed);
+
+    const{currentRound,isLive,isFinal}=parsed;
+    const rn=['','Round 1','Round 2','Round 3','Round 4'][currentRound]||`Round ${currentRound}`;
+    document.getElementById('dot').className='dot'+(isLive?' live':'idle');
+    document.getElementById('sround').textContent=rn+(isLive?' · EN DIRECT':isFinal?' · TERMINÉ':'');
+    document.getElementById('stime').textContent=ts();
+
+    updateHeader(event.name);
+    renderPodium(parsed);
+    setBanner(null);
 
   }catch(e){
     document.getElementById('dot').className='dot err';
-    document.getElementById('sround').textContent='Erreur de connexion';
-    setBanner(`<strong>Impossible de charger ESPN.</strong><br/>${e.message}<br/><small>Vérifie ta connexion et réessaie.</small>`,'berr');
-    document.getElementById('pzone').innerHTML='';
+    document.getElementById('sround').textContent='Erreur';
+    setBanner(`<strong>Erreur ESPN.</strong> ${e.message}`,'berr');
   }
-
-  btn.disabled=false;
-  ic.textContent='⛳';
 }
 
-// ══════════════════════════════════════════════════════
-//  SETTINGS MODAL
-// ══════════════════════════════════════════════════════
-function openSettings(){
-  renderPartList();
-  document.getElementById('formSection').style.display='none';
-  document.getElementById('modalOverlay').classList.add('open');
-}
-function closeSettings(){document.getElementById('modalOverlay').classList.remove('open');}
-function closeSettingsIfOutside(e){if(e.target===document.getElementById('modalOverlay'))closeSettings();}
-
-function renderPartList(){
-  const parts=loadParts();
-  const z=document.getElementById('partList');
-  z.innerHTML=parts.map(p=>`
-    <div class="part-item">
-      <div class="part-item-header">
-        <div class="part-item-name">${p.name}</div>
-        <div class="part-actions">
-          <button class="btn-edit" onclick="editPart('${p.id}')">✏️ Modifier</button>
-          <button class="btn-del" onclick="deletePart('${p.id}')">🗑️</button>
-        </div>
-      </div>
-      <div class="part-golfers">${p.golfers.map((g,i)=>`${i+1}. ${g}`).join('<br/>')}</div>
-      <div class="part-guess">Pronostic vainqueur : ${p.guess}</div>
-    </div>`).join('');
+async function init(){
+  // 1. Charge les données Firebase
+  await loadFromFirebase();
+  // 2. Écoute les changements en temps réel
+  listenFirebase();
+  // 3. Premier fetch ESPN
+  await fetchAndRender();
+  // 4. Auto-refresh toutes les 90 secondes
+  refreshTimer=setInterval(fetchAndRender,90000);
 }
 
-function showForm(editData){
-  const fs=document.getElementById('formSection');
-  fs.style.display='block';
-  document.getElementById('formTitle').textContent=editData?'Modifier le participant':'Nouveau participant';
-  document.getElementById('editId').value=editData?.id||'';
-  document.getElementById('fName').value=editData?.name||'';
-  document.getElementById('fG1').value=editData?.golfers[0]||'';
-  document.getElementById('fG2').value=editData?.golfers[1]||'';
-  document.getElementById('fG3').value=editData?.golfers[2]||'';
-  document.getElementById('fG4').value=editData?.golfers[3]||'';
-  document.getElementById('fGuess').value=editData?.guess??'';
-  fs.scrollIntoView({behavior:'smooth'});
-}
-
-function editPart(id){
-  const parts=loadParts();
-  const p=parts.find(x=>x.id===id);
-  if(p)showForm(p);
-}
-
-function deletePart(id){
-  if(!confirm('Supprimer ce participant ?'))return;
-  const parts=loadParts().filter(p=>p.id!==id);
-  saveParts(parts);
-  renderPartList();
-  if(gParsed)renderPodium(gParsed);
-}
-
-function savePart(){
-  const name=document.getElementById('fName').value.trim();
-  const g1=document.getElementById('fG1').value.trim();
-  const g2=document.getElementById('fG2').value.trim();
-  const g3=document.getElementById('fG3').value.trim();
-  const g4=document.getElementById('fG4').value.trim();
-  const guess=parseInt(document.getElementById('fGuess').value,10);
-
-  if(!name||!g1||!g2||!g3||!g4||isNaN(guess)){
-    alert('Tous les champs sont obligatoires.');return;
-  }
-
-  const parts=loadParts();
-  const editId=document.getElementById('editId').value;
-
-  if(editId){
-    const idx=parts.findIndex(p=>p.id===editId);
-    if(idx>=0)parts[idx]={id:editId,name,golfers:[g1,g2,g3,g4],guess};
-  }else{
-    parts.push({id:uid(),name,golfers:[g1,g2,g3,g4],guess});
-  }
-
-  saveParts(parts);
-  document.getElementById('formSection').style.display='none';
-  renderPartList();
-  if(gParsed)renderPodium(gParsed);
-}
-
-function resetTournament(){
-  if(!confirm('Effacer tous les scores figés ? (Les participants sont conservés)'))return;
-  resetTournamentData();
-  alert('Scores réinitialisés. Actualise pour recalculer.');
-  if(gParsed)renderPodium(gParsed);
-}
-
-// ══════════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════════
-// Met à jour le header avec les noms des participants au chargement
-(function initHeader(){
-  const parts=loadParts();
-  document.getElementById('headerSub').textContent=parts.map(p=>p.name.toUpperCase()).join(' · ');
-})();
-
-main();
+init();
 </script>
 </body>
 </html>
