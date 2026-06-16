@@ -675,7 +675,7 @@ async function init(){
   // 3. Premier fetch ESPN
   await fetchAndRender();
   // 4. Auto-refresh toutes les 90 secondes
-  refreshTimer=setInterval(fetchAndRender,90000);
+  refreshTimer=setInterval(fetchAndRender,30000);
 }
 
 init();
