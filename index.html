@@ -389,11 +389,20 @@ function parseEvent(ev){
   const distinct=[...new Set(withScore.map(p=>p.stpTotal))].sort((a,b)=>a-b);
   for(const p of withScore)p.rank=distinct.indexOf(p.stpTotal)+1;
 
-  // Applique la cutLine manuelle (si définie dans Firebase) : score > cutLine => cut manqué
+  // Applique la cutLine manuelle (si définie dans Firebase) : score APRÈS R1+R2 > cutLine => cut manqué
+  // IMPORTANT : on compare le score cumulé à la fin du Round 2 (pas le score total actuel,
+  // qui peut inclure le Round 3/4 déjà joués et fausser la comparaison).
   const cutLine=gCutLines[tournKey];
-  if(cutLine!==undefined && cutLine!==null && currentRound>=3){
+  if(cutLine!==undefined && cutLine!==null){
     for(const p of withScore){
-      p.madeCut = p.stpTotal>cutLine ? false : true;
+      // Score cumulé après R1+R2 = somme des scores des rounds 1 et 2
+      const r1=p.roundScores[1];
+      const r2=p.roundScores[2];
+      if(r1!==undefined && r2!==undefined){
+        const scoreAfterR2 = r1 + r2;
+        p.madeCut = scoreAfterR2 > cutLine ? false : true;
+      }
+      // Si on n'a pas encore les scores R1+R2 (tournoi pas assez avancé), madeCut reste null
     }
   }
 
