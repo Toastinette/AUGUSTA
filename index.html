@@ -711,18 +711,18 @@ async function fetchAndRender(){
     gParsed=parsed;
     gTournKey=parsed.tournKey;
 
-    // DEBUG temporaire : log la donnée brute ESPN pour un joueur cut, pour diagnostic
+    // DEBUG temporaire : stocke la donnée brute ESPN pour un joueur cut, pour diagnostic
     try{
-      const comp=(event.competitions||[])[0]||{};
+      window.debugPlayers = window.debugPlayers || {};
       for(const c of(event.competitions||[])){
         for(const ath of(c.competitors||[])){
           const nm=(ath.athlete?.displayName||'').toLowerCase();
           if(nm.includes('rahm')||nm.includes('dechambeau')){
-            console.log('=== DEBUG RAW ESPN DATA ===', ath.athlete?.displayName);
-            console.log(JSON.stringify(ath, null, 2));
+            window.debugPlayers[ath.athlete.displayName] = ath;
           }
         }
       }
+      console.log('Debug data ready. Tape: copy(JSON.stringify(window.debugPlayers))');
     }catch(e){console.log('debug log error',e);}
 
     // Auto-freeze rounds terminés dans Firebase
