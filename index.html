@@ -354,14 +354,18 @@ function parseEvent(ev){
     }
   }
 
-  const active=raw.filter(p=>p.madeCut!==false&&p.stpTotal!==null);
-  const cut=raw.filter(p=>p.madeCut===false);
-  const noScore=raw.filter(p=>p.madeCut!==false&&p.stpTotal===null);
-  active.sort((a,b)=>a.stpTotal-b.stpTotal);
-  const distinct=[...new Set(active.map(p=>p.stpTotal))].sort((a,b)=>a-b);
-  for(const p of active)p.rank=distinct.indexOf(p.stpTotal)+1;
+  // Le classement (rang) doit inclure TOUS les joueurs ayant un score valide,
+  // qu'ils aient passé le cut ou non. Le cut donne un bonus/malus À PART,
+  // il ne doit jamais empêcher le calcul normal du rang ni des points de position.
+  const withScore=raw.filter(p=>p.stpTotal!==null);
+  const noScore=raw.filter(p=>p.stpTotal===null);
+  withScore.sort((a,b)=>a.stpTotal-b.stpTotal);
+  const distinct=[...new Set(withScore.map(p=>p.stpTotal))].sort((a,b)=>a-b);
+  for(const p of withScore)p.rank=distinct.indexOf(p.stpTotal)+1;
 
-  const allPlayers=[...active,...noScore,...cut];
+  // Le leader (pour le bonus score exact) doit être un joueur encore actif (pas cut)
+  const active=withScore.filter(p=>p.madeCut!==false);
+  const allPlayers=[...withScore,...noScore];
   const leader=active[0]||null;
   return{players:allPlayers,currentRound,isLive,isFinal,leader,tournKey,eventName:ev.name||''};
 }
