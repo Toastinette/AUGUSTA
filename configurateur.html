@@ -80,6 +80,17 @@
   </div>
 
   <div class="section">
+    <div class="section-title">✂️ Cut Line</div>
+    <p style="font-size:12px;color:var(--txt3);font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;">
+      Renseigne manuellement le score de la cut line (score relatif au par) une fois
+      le cut connu après le Round 2. Les joueurs avec un score <strong>supérieur</strong>
+      à cette valeur seront considérés comme ayant raté le cut (-5 pts).
+      Les autres reçoivent le bonus cut passé (+2 pts).
+    </p>
+    <div id="cutLineList" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <div class="section">
     <div class="section-title">👥 Participants</div>
     <div class="part-list" id="partList"></div>
     <button class="btn-add" onclick="addPart()">+ Ajouter un participant</button>
@@ -90,10 +101,20 @@
   </button>
 
   <div class="section" style="margin-top:20px;">
+    <div class="section-title">🔄 Recalculer un round</div>
+    <p style="font-size:12px;color:var(--txt3);font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;">
+      Si une règle a été corrigée et qu'un round figé contient des points faux,
+      tu peux le débloquer ici. Il sera recalculé automatiquement (avec les bonnes règles)
+      au prochain chargement de l'app. Les autres rounds restent inchangés.
+    </p>
+    <div id="frozenRoundsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;"></div>
+  </div>
+
+  <div class="section" style="margin-top:20px;">
     <div class="danger">
       <div class="danger-title">⚠️ Nouveau tournoi</div>
-      <p>Efface tous les scores figés des rounds précédents.<br/>Les participants sont conservés.</p>
-      <button class="btn-danger" onclick="resetScores()">🗑️ Réinitialiser les scores</button>
+      <p>Efface TOUS les scores figés des rounds précédents.<br/>Les participants sont conservés.</p>
+      <button class="btn-danger" onclick="resetScores()">🗑️ Réinitialiser tous les scores</button>
     </div>
   </div>
 </div>
@@ -102,7 +123,7 @@
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,doc,getDoc,setDoc,deleteDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,doc,getDoc,setDoc,deleteDoc,deleteField}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig={
   apiKey:"AIzaSyDG5eeQ3R8lVBe-XFsJuUv82JynPlYzps8",
@@ -126,6 +147,110 @@ function toast(msg){
   t.className='toast show';
   setTimeout(()=>t.className='toast',2600);
 }
+
+let frozenRounds={};
+let cutLines={};
+
+// Charge les cut lines existantes et affiche le formulaire pour chaque tournoi connu
+async function loadCutLines(){
+  try{
+    const snap=await getDoc(doc(db,'config','cutLines'));
+    cutLines=snap.exists()?snap.data():{};
+    renderCutLineList();
+  }catch(e){
+    console.error('Erreur chargement cutLines:',e);
+  }
+}
+
+// Liste des tournois Majeurs possibles (clé utilisée par index.html : major_year)
+const MAJOR_KEYS=['masters','pga championship','u.s. open','the open championship'];
+
+function renderCutLineList(){
+  const zone=document.getElementById('cutLineList');
+  const year=new Date().getFullYear();
+  // Affiche un champ pour chaque tournoi qui a déjà des rounds figés (donc en cours/passé)
+  // + un champ libre pour saisir manuellement une clé de tournoi
+  const knownTournKeys=new Set([...Object.keys(frozenRounds),...Object.keys(cutLines)]);
+  if(knownTournKeys.size===0){
+    // Propose les 4 majeurs de l'année en cours par défaut
+    MAJOR_KEYS.forEach(m=>knownTournKeys.add(`${m}_${year}`));
+  }
+  let html='';
+  for(const tk of knownTournKeys){
+    const val=cutLines[tk];
+    html+=`<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;">
+      <span style="flex:1;font-size:12px;font-family:'DM Mono',monospace;color:var(--txt2);">${tk}</span>
+      <input class="field-input" style="width:70px;text-align:center;" type="number"
+        value="${val??''}" placeholder="+4"
+        onchange="window.setCutLine('${tk}', this.value)"/>
+    </div>`;
+  }
+  zone.innerHTML=html;
+}
+
+window.setCutLine=async function(tournKey, value){
+  try{
+    const n=parseInt(value,10);
+    if(isNaN(n)){
+      toast('⚠️ Valeur invalide');
+      return;
+    }
+    cutLines[tournKey]=n;
+    await setDoc(doc(db,'config','cutLines'),cutLines);
+    toast(`✅ Cut line ${tournKey} = ${n>=0?'+':''}${n}`);
+  }catch(e){
+    toast('❌ Erreur : '+e.message);
+  }
+};
+
+// Charge les rounds figés et affiche les boutons de recalcul
+async function loadFrozenRounds(){
+  try{
+    const snap=await getDoc(doc(db,'config','frozenRounds'));
+    frozenRounds=snap.exists()?snap.data():{};
+    renderFrozenList();
+    renderCutLineList(); // met à jour la liste des tournois connus
+  }catch(e){
+    console.error('Erreur chargement frozenRounds:',e);
+  }
+}
+
+function renderFrozenList(){
+  const zone=document.getElementById('frozenRoundsList');
+  const tournKeys=Object.keys(frozenRounds);
+  if(tournKeys.length===0){
+    zone.innerHTML=`<div style="font-size:12px;color:var(--txt3);font-family:'DM Mono',monospace;padding:10px;">Aucun round figé pour le moment.</div>`;
+    return;
+  }
+  let html='';
+  for(const tk of tournKeys){
+    const rounds=frozenRounds[tk]||{};
+    const roundNums=Object.keys(rounds).sort();
+    if(roundNums.length===0)continue;
+    html+=`<div style="font-size:11px;color:var(--gold2);font-family:'DM Mono',monospace;margin-top:8px;">${tk}</div>`;
+    for(const r of roundNums){
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;">
+        <span style="font-size:13px;font-family:'DM Mono',monospace;">🔒 Round ${r} figé</span>
+        <button class="btn-sm del" onclick="window.unfreezeRound('${tk}','${r}')">🔄 Recalculer</button>
+      </div>`;
+    }
+  }
+  zone.innerHTML=html||`<div style="font-size:12px;color:var(--txt3);font-family:'DM Mono',monospace;padding:10px;">Aucun round figé pour le moment.</div>`;
+}
+
+window.unfreezeRound=async function(tournKey,roundNum){
+  if(!confirm(`Recalculer le Round ${roundNum} ? Il sera reconstruit automatiquement avec les règles actuelles au prochain chargement de l'app.`))return;
+  try{
+    const fieldPath=`${tournKey}.${roundNum}`;
+    await setDoc(doc(db,'config','frozenRounds'),{
+      [tournKey]:{[roundNum]:deleteField()}
+    },{merge:true});
+    toast(`✅ Round ${roundNum} débloqué — sera recalculé`);
+    await loadFrozenRounds();
+  }catch(e){
+    toast('❌ Erreur : '+e.message);
+  }
+};
 
 // Charge les participants depuis Firebase
 async function loadParts(){
@@ -247,6 +372,8 @@ window.resetScores=async function(){
 };
 
 loadParts();
+loadFrozenRounds();
+loadCutLines();
 </script>
 </body>
 </html>

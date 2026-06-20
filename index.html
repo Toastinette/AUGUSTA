@@ -225,6 +225,7 @@ function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.in
 // ══════════════════════════════════════════════════════
 let gParticipants=[];
 let gFrozenRounds={};  // { "masters_2026": { 1: {morganId: pts, ...}, 2: {...} } }
+let gCutLines={};      // { "masters_2026": 4 } -> cutLine en score relatif au par (ex: +4)
 let gTournKey='';
 
 async function loadFromFirebase(){
@@ -248,6 +249,12 @@ async function loadFromFirebase(){
       gFrozenRounds=frozenDoc.data()||{};
     }
 
+    // Cut lines (saisies manuellement dans le configurateur)
+    const cutDoc=await getDoc(doc(db,'config','cutLines'));
+    if(cutDoc.exists()){
+      gCutLines=cutDoc.data()||{};
+    }
+
     updateHeaderNames();
     document.getElementById('syncIndicator').textContent='✅ Synchronisé Firebase';
     document.getElementById('syncIndicator').className='sync-indicator synced';
@@ -268,7 +275,7 @@ async function saveFrozenToFirebase(tournKey,roundNum,pointsByGolfer){
   }
 }
 
-// Écoute en temps réel les changements de participants et scores figés
+// Écoute en temps réel les changements de participants, scores figés et cut lines
 function listenFirebase(){
   onSnapshot(doc(db,'config','participants'),(snap)=>{
     if(snap.exists()){
@@ -281,6 +288,15 @@ function listenFirebase(){
     if(snap.exists()){
       gFrozenRounds=snap.data()||{};
       if(gParsed)renderPodium(gParsed);
+    }
+  });
+  onSnapshot(doc(db,'config','cutLines'),(snap)=>{
+    if(snap.exists()){
+      gCutLines=snap.data()||{};
+      if(gParsed){
+        // Recalcule le parsing avec la nouvelle cutLine
+        fetchAndRender();
+      }
     }
   });
 }
@@ -359,30 +375,27 @@ function parseEvent(ev){
         }
       }
 
-      // IMPORTANT : ESPN ne fournit pas de champ de statut "cut" par joueur dans cette
-      // réponse (pas de ath.status.type.name). Le cut se détecte par le nombre de rounds
-      // joués : si on est au round 3+ et que le joueur n'a que 2 linescores (R1+R2) alors
-      // qu'on attendrait 3 ou 4, c'est qu'il a été coupé après le R2.
-      const nbRoundsPlayed=roundNums.length;
-      let madeCut=null;
-      if(currentRound>=3){
-        // Si le joueur a moins de rounds joués que le round actuel, il a probablement été cut
-        // (sauf round en cours non terminé pour lui, donc on compare à currentRound-1 minimum)
-        madeCut = nbRoundsPlayed>=3 ? true : (nbRoundsPlayed<=2 ? false : true);
-      }
-
-      raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,madeCut,rank:null});
+      // Le cut N'EST PLUS détecté automatiquement (ESPN ne fournit pas de champ fiable).
+      // Il sera déterminé après coup en comparant stpTotal à la cutLine saisie manuellement
+      // dans le configurateur. madeCut reste null ici, calculé plus bas.
+      raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,madeCut:null,rank:null});
     }
   }
 
-  // Le classement (rang) doit inclure TOUS les joueurs ayant un score valide,
-  // qu'ils aient passé le cut ou non. Le cut donne un bonus/malus À PART,
-  // il ne doit jamais empêcher le calcul normal du rang ni des points de position.
+  // Le classement (rang) doit inclure TOUS les joueurs ayant un score valide.
   const withScore=raw.filter(p=>p.stpTotal!==null);
   const noScore=raw.filter(p=>p.stpTotal===null);
   withScore.sort((a,b)=>a.stpTotal-b.stpTotal);
   const distinct=[...new Set(withScore.map(p=>p.stpTotal))].sort((a,b)=>a-b);
   for(const p of withScore)p.rank=distinct.indexOf(p.stpTotal)+1;
+
+  // Applique la cutLine manuelle (si définie dans Firebase) : score > cutLine => cut manqué
+  const cutLine=gCutLines[tournKey];
+  if(cutLine!==undefined && cutLine!==null && currentRound>=3){
+    for(const p of withScore){
+      p.madeCut = p.stpTotal>cutLine ? false : true;
+    }
+  }
 
   // Le leader (pour le bonus score exact) doit être un joueur encore actif (pas cut)
   const active=withScore.filter(p=>p.madeCut!==false);
@@ -711,20 +724,6 @@ async function fetchAndRender(){
     gParsed=parsed;
     gTournKey=parsed.tournKey;
 
-    // DEBUG temporaire : stocke la donnée brute ESPN pour un joueur cut, pour diagnostic
-    try{
-      window.debugPlayers = window.debugPlayers || {};
-      for(const c of(event.competitions||[])){
-        for(const ath of(c.competitors||[])){
-          const nm=(ath.athlete?.displayName||'').toLowerCase();
-          if(nm.includes('rahm')||nm.includes('dechambeau')){
-            window.debugPlayers[ath.athlete.displayName] = ath;
-          }
-        }
-      }
-      console.log('Debug data ready. Tape: copy(JSON.stringify(window.debugPlayers))');
-    }catch(e){console.log('debug log error',e);}
-
     // Auto-freeze rounds terminés dans Firebase
     await autoFreezeCompletedRounds(parsed);
 
@@ -736,7 +735,14 @@ async function fetchAndRender(){
 
     updateHeader(event.name);
     renderPodium(parsed);
-    setBanner(null);
+
+    // Avertit si la cut line n'est pas encore renseignée (à partir du round 3)
+    const cutLineSet = gCutLines[parsed.tournKey]!==undefined && gCutLines[parsed.tournKey]!==null;
+    if(currentRound>=3 && !cutLineSet){
+      setBanner('⚠️ La <strong>cut line</strong> n\'a pas encore été saisie pour ce tournoi. Les bonus/malus de cut (+2/-5) ne sont pas appliqués. Ouvre le configurateur pour la renseigner.','binfo');
+    }else{
+      setBanner(null);
+    }
 
   }catch(e){
     document.getElementById('dot').className='dot err';
