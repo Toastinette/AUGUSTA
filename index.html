@@ -340,16 +340,37 @@ function parseEvent(ev){
       for(const cand of[ath.score,ath.displayScore]){
         const v=parseScoreStr(cand);if(v!==null){stpTotal=v;break;}
       }
+
+      // IMPORTANT : ath.linescores[i].displayValue est le score CUMULÉ après le round i
+      // (pas le score du round isolé). On calcule donc le score du jour par différence.
       const ls=ath.linescores||[];
-      const roundScores={};
+      const cumulByRound={}; // cumulé après chaque round
       ls.forEach((l,i)=>{
-        const v=parseScoreStr(l.displayValue??l.value??null);
-        if(v!==null)roundScores[i+1]=v;
+        const v=parseScoreStr(l.displayValue??null);
+        if(v!==null)cumulByRound[i+1]=v;
       });
-      const sName=(ath.status?.type?.name||'').toLowerCase();
-      const sShort=(ath.status?.type?.shortDetail||'').toLowerCase();
-      const isCut=sName.includes('cut')||sShort.includes('cut')||sName==='wd'||sName==='dq';
-      const madeCut=isCut?false:(currentRound>=3?true:null);
+      const roundScores={}; // score du jour isolé (par différence)
+      const roundNums=Object.keys(cumulByRound).map(Number).sort((a,b)=>a-b);
+      for(const r of roundNums){
+        if(r===1){
+          roundScores[1]=cumulByRound[1];
+        }else if(cumulByRound[r-1]!==undefined){
+          roundScores[r]=cumulByRound[r]-cumulByRound[r-1];
+        }
+      }
+
+      // IMPORTANT : ESPN ne fournit pas de champ de statut "cut" par joueur dans cette
+      // réponse (pas de ath.status.type.name). Le cut se détecte par le nombre de rounds
+      // joués : si on est au round 3+ et que le joueur n'a que 2 linescores (R1+R2) alors
+      // qu'on attendrait 3 ou 4, c'est qu'il a été coupé après le R2.
+      const nbRoundsPlayed=roundNums.length;
+      let madeCut=null;
+      if(currentRound>=3){
+        // Si le joueur a moins de rounds joués que le round actuel, il a probablement été cut
+        // (sauf round en cours non terminé pour lui, donc on compare à currentRound-1 minimum)
+        madeCut = nbRoundsPlayed>=3 ? true : (nbRoundsPlayed<=2 ? false : true);
+      }
+
       raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,madeCut,rank:null});
     }
   }
@@ -689,6 +710,20 @@ async function fetchAndRender(){
     const parsed=parseEvent(event);
     gParsed=parsed;
     gTournKey=parsed.tournKey;
+
+    // DEBUG temporaire : log la donnée brute ESPN pour un joueur cut, pour diagnostic
+    try{
+      const comp=(event.competitions||[])[0]||{};
+      for(const c of(event.competitions||[])){
+        for(const ath of(c.competitors||[])){
+          const nm=(ath.athlete?.displayName||'').toLowerCase();
+          if(nm.includes('rahm')||nm.includes('dechambeau')){
+            console.log('=== DEBUG RAW ESPN DATA ===', ath.athlete?.displayName);
+            console.log(JSON.stringify(ath, null, 2));
+          }
+        }
+      }
+    }catch(e){console.log('debug log error',e);}
 
     // Auto-freeze rounds terminés dans Firebase
     await autoFreezeCompletedRounds(parsed);
