@@ -357,23 +357,14 @@ function parseEvent(ev){
         const v=parseScoreStr(cand);if(v!==null){stpTotal=v;break;}
       }
 
-      // IMPORTANT : ath.linescores[i].displayValue est le score CUMULÉ après le round i
-      // (pas le score du round isolé). On calcule donc le score du jour par différence.
+      // CONFIRMÉ par inspection des données ESPN réelles : ath.linescores[i].displayValue
+      // est déjà le score ISOLÉ du round (pas un cumulé). Pas de calcul de différence nécessaire.
       const ls=ath.linescores||[];
-      const cumulByRound={}; // cumulé après chaque round
+      const roundScores={};
       ls.forEach((l,i)=>{
         const v=parseScoreStr(l.displayValue??null);
-        if(v!==null)cumulByRound[i+1]=v;
+        if(v!==null)roundScores[i+1]=v;
       });
-      const roundScores={}; // score du jour isolé (par différence)
-      const roundNums=Object.keys(cumulByRound).map(Number).sort((a,b)=>a-b);
-      for(const r of roundNums){
-        if(r===1){
-          roundScores[1]=cumulByRound[1];
-        }else if(cumulByRound[r-1]!==undefined){
-          roundScores[r]=cumulByRound[r]-cumulByRound[r-1];
-        }
-      }
 
       // Le cut N'EST PLUS détecté automatiquement (ESPN ne fournit pas de champ fiable).
       // Il sera déterminé après coup en comparant stpTotal à la cutLine saisie manuellement
@@ -732,20 +723,6 @@ async function fetchAndRender(){
     const parsed=parseEvent(event);
     gParsed=parsed;
     gTournKey=parsed.tournKey;
-
-    // DEBUG temporaire : vérifie les données brutes pour Hovland
-    try{
-      window.debugPlayers = window.debugPlayers || {};
-      for(const c of(event.competitions||[])){
-        for(const ath of(c.competitors||[])){
-          const nm=(ath.athlete?.displayName||'').toLowerCase();
-          if(nm.includes('hovland')){
-            window.debugPlayers[ath.athlete.displayName] = ath;
-          }
-        }
-      }
-      console.log('Debug Hovland ready. Tape: copy(JSON.stringify(window.debugPlayers))');
-    }catch(e){console.log('debug log error',e);}
 
     // Auto-freeze rounds terminés dans Firebase
     await autoFreezeCompletedRounds(parsed);
