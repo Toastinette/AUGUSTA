@@ -266,9 +266,15 @@ async function loadFromFirebase(){
 
 async function saveFrozenToFirebase(tournKey,roundNum,pointsByGolfer){
   try{
+    // IMPORTANT : on écrit UNIQUEMENT ce round précis avec merge:true,
+    // jamais tout l'objet gFrozenRounds en mémoire (qui peut être périmé
+    // si le configurateur a modifié Firebase entre temps — race condition).
+    await setDoc(doc(db,'config','frozenRounds'),{
+      [tournKey]:{[roundNum]:pointsByGolfer}
+    },{merge:true});
+    // Met à jour la copie locale seulement après écriture réussie
     if(!gFrozenRounds[tournKey])gFrozenRounds[tournKey]={};
     gFrozenRounds[tournKey][roundNum]=pointsByGolfer;
-    await setDoc(doc(db,'config','frozenRounds'),gFrozenRounds);
     console.log(`Round ${roundNum} figé dans Firebase pour ${tournKey}`);
   }catch(e){
     console.error('Firebase save error:',e);
@@ -723,15 +729,6 @@ async function fetchAndRender(){
     const parsed=parseEvent(event);
     gParsed=parsed;
     gTournKey=parsed.tournKey;
-
-    // DEBUG ciblé : affiche roundScores calculé pour Hovland
-    const hovlandDebug=parsed.players.find(p=>p.normName.includes('hovland'));
-    if(hovlandDebug){
-      console.log('=== HOVLAND roundScores ===', JSON.stringify(hovlandDebug.roundScores));
-      console.log('=== HOVLAND stpTotal ===', hovlandDebug.stpTotal);
-      console.log('=== HOVLAND rank ===', hovlandDebug.rank);
-      console.log('=== HOVLAND madeCut ===', hovlandDebug.madeCut);
-    }
 
     // Auto-freeze rounds terminés dans Firebase
     await autoFreezeCompletedRounds(parsed);
