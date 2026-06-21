@@ -1,8 +1,10 @@
-const CACHE_NAME = 'majorbet-v1';
+// Le numéro de version change à chaque mise à jour du code pour forcer
+// tous les navigateurs à télécharger la nouvelle version (network-first
+// pour index.html), au lieu de servir une copie en cache obsolète.
+const CACHE_VERSION = 'v3';
+const CACHE_NAME = 'majorbet-' + CACHE_VERSION;
 const BASE = '/AUGUSTA';
 const STATIC_ASSETS = [
-  BASE + '/',
-  BASE + '/index.html',
   BASE + '/manifest.json',
   BASE + '/icons/icon-192.png',
   BASE + '/icons/icon-512.png'
@@ -25,15 +27,34 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Firebase, ESPN, Google : toujours réseau
-  if (e.request.url.includes('firestore') ||
-      e.request.url.includes('espn') ||
-      e.request.url.includes('googleapis') ||
-      e.request.url.includes('gstatic')) {
+  const url = e.request.url;
+
+  // Firebase, ESPN, Google : toujours réseau, jamais de cache
+  if (url.includes('firestore') ||
+      url.includes('espn') ||
+      url.includes('googleapis') ||
+      url.includes('gstatic')) {
     e.respondWith(fetch(e.request));
     return;
   }
-  // Reste : cache first
+
+  // index.html (et la racine) : NETWORK-FIRST.
+  // On veut toujours la dernière version du code en priorité.
+  // Le cache ne sert que de secours si le réseau est indisponible.
+  if (url.endsWith('/AUGUSTA/') || url.endsWith('/AUGUSTA/index.html') || url.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(resp => {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          return resp;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Reste (manifest, icônes) : cache-first, ça change rarement
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );
