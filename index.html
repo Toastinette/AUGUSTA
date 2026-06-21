@@ -733,6 +733,20 @@ async function fetchAndRender(){
     gParsed=parsed;
     gTournKey=parsed.tournKey;
 
+    // DEBUG temporaire : vérifie les données brutes pour Hovland
+    try{
+      window.debugPlayers = window.debugPlayers || {};
+      for(const c of(event.competitions||[])){
+        for(const ath of(c.competitors||[])){
+          const nm=(ath.athlete?.displayName||'').toLowerCase();
+          if(nm.includes('hovland')){
+            window.debugPlayers[ath.athlete.displayName] = ath;
+          }
+        }
+      }
+      console.log('Debug Hovland ready. Tape: copy(JSON.stringify(window.debugPlayers))');
+    }catch(e){console.log('debug log error',e);}
+
     // Auto-freeze rounds terminés dans Firebase
     await autoFreezeCompletedRounds(parsed);
 
