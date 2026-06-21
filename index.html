@@ -447,10 +447,14 @@ async function autoFreezeCompletedRounds(parsed){
   const{players,currentRound,isFinal,tournKey}=parsed;
   const frozen=gFrozenRounds[tournKey]||{};
 
+  console.log('[AUTOFREEZE] tournKey=',tournKey,'currentRound=',currentRound,'frozen keys=',Object.keys(frozen));
+
   for(let r=1;r<=4;r++){
     const isRoundDone=(r<currentRound)||(isFinal&&r===currentRound);
     if(!isRoundDone)continue;
-    if(frozen[r])continue; // déjà figé
+    const alreadyFrozen = frozen[r] && Object.keys(frozen[r]).length>0;
+    console.log(`[AUTOFREEZE] Round ${r} isRoundDone=${isRoundDone} alreadyFrozen=${alreadyFrozen}`);
+    if(alreadyFrozen)continue; // déjà figé (et non vide)
 
     // Calcule les points par joueur pour ce round
     const pointsByPlayer={};
@@ -460,6 +464,8 @@ async function autoFreezeCompletedRounds(parsed){
         pointsByPlayer[ep.normName]={pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score};
       }
     }
+    const hovlandEntry = pointsByPlayer['viktor hovland'];
+    console.log(`[AUTOFREEZE] Writing round ${r}, Hovland data:`, JSON.stringify(hovlandEntry));
     await saveFrozenToFirebase(tournKey,r,pointsByPlayer);
   }
 }
