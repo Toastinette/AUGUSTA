@@ -71,7 +71,6 @@
     .ptop{display:flex;align-items:center;gap:12px;padding:16px 18px 0;}
     .rnum{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;min-width:28px;text-align:center;line-height:1;}
     .r1 .rnum{color:var(--gold);}.r2 .rnum{color:#b2bed2;}.r3 .rnum{color:#c47858;}
-    .ppx{image-rendering:pixelated;display:block;flex-shrink:0;}
     .pinfo{flex:1;min-width:0;}
     .pname{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);line-height:1.1;}
     .plabel{font-size:11px;color:var(--txt3);margin-top:3px;font-family:'DM Mono',monospace;}
@@ -81,16 +80,16 @@
     .ppts-l{font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);letter-spacing:1.5px;margin-top:2px;}
     .pmid{padding:6px 18px 14px;display:flex;align-items:center;justify-content:flex-end;}
     .chev{font-size:11px;color:var(--txt3);transition:transform .3s;font-family:'DM Mono',monospace;}
-    .pcard.open .chev{transform:rotate(180deg);}
+    .pcard.open .chev{transform:none;}
     .detail{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
     .pcard.open .detail{max-height:900px;}
     .din{border-top:1px solid rgba(255,255,255,.07);padding:14px 18px 18px;}
-    .dhead{display:grid;grid-template-columns:1fr 54px 46px 60px;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
+    .dhead{display:grid;grid-template-columns:1fr 54px 46px 64px;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
     .dhead span{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-family:'DM Mono',monospace;}
     .dhead span:nth-child(n+2){text-align:center;}.dhead span:last-child{text-align:right;}
-    .drow{display:grid;grid-template-columns:1fr 54px 46px 60px;gap:6px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .drow{display:grid;grid-template-columns:1fr 54px 46px 64px;gap:7px;align-items:center;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.06);}
     .drow:last-child{border-bottom:none;}
-    .dn{font-size:13px;font-weight:500;color:var(--txt1);}
+    .dn{font-size:14px;font-weight:700;color:var(--txt1);min-width:0;}
     .dp{font-family:'DM Mono',monospace;font-size:11px;text-align:center;padding:3px 5px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--cream2);}
     .dp.cut{background:rgba(239,68,68,.18);color:#fca5a5;}
     .dp.top3{background:rgba(201,168,76,.22);color:var(--gold2);}
@@ -110,6 +109,60 @@
     .skel{height:90px;border-radius:var(--r);background:linear-gradient(90deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 100%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;}
     @keyframes shimmer{to{background-position:-200% 0}}
     .sync-indicator{text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--txt3);margin-bottom:8px;}
+    .entry-panel{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+    .entry-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+    .entry-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--txt1);}
+    .budget-pill{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold2);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.22);border-radius:999px;padding:5px 9px;white-space:nowrap;}
+    .entry-grid{display:grid;gap:9px;}
+    .entry-row{display:grid;grid-template-columns:86px 1fr;gap:8px;align-items:center;}
+    .entry-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--txt3);letter-spacing:.8px;text-transform:uppercase;}
+    .entry-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 10px;color:var(--txt1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+    .entry-input:focus{border-color:rgba(201,168,76,.45);}
+    .pick-row{display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:center;}
+    .pick-field{min-width:0;}
+    .pick-field .entry-row{display:block;}
+    .pick-field .entry-label{display:block;margin-bottom:5px;}
+    .photo-frame{position:relative;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);overflow:hidden;flex-shrink:0;}
+    .photo-frame::after{content:'';position:absolute;inset:auto 8px 5px;height:14px;background:rgba(0,0,0,.16);filter:blur(8px);border-radius:50%;z-index:1;}
+    .photo-frame.pick{width:88px;height:96px;border-radius:14px;}
+    .photo-frame.mini{width:92px;height:104px;border-radius:14px;}
+    .photo-frame.hero{width:100px;height:112px;border-radius:16px;}
+    .photo-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;z-index:2;}
+    .photo-empty{font-family:'DM Mono',monospace;font-size:28px;color:rgba(232,201,122,.38);z-index:1;}
+    .entry-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--txt3);line-height:1.7;margin-top:10px;}
+    .entry-meta strong{color:var(--gold2);}
+    .entry-actions{display:flex;gap:8px;margin-top:12px;}
+    .entry-actions .btn{margin:0;border-radius:12px;padding:11px;font-size:13px;}
+    .entry-mini{font-family:'DM Mono',monospace;font-size:10px;color:var(--txt3);margin-top:3px;}
+    .choice-signal{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;margin-top:7px;}
+    .choice-signal span{font-family:'DM Mono',monospace;font-size:10px;color:var(--txt3);}
+    .choice-signal strong{font-family:'DM Mono',monospace;font-size:14px;color:var(--txt1);}
+    .boost-badge{display:inline-flex;align-items:center;justify-content:center;min-width:58px;border-radius:999px;padding:5px 8px;font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#08170f;background:linear-gradient(135deg,#e8c97a,#f5df9d);box-shadow:0 0 18px rgba(232,201,122,.24);}
+    .boost-badge.hot{background:linear-gradient(135deg,#4ade80,#bbf7d0);box-shadow:0 0 22px rgba(74,222,128,.28);}
+    .boost-badge.fire{background:linear-gradient(135deg,#f97316,#fde68a);box-shadow:0 0 24px rgba(249,115,22,.3);}
+    .boost-badge.cold{background:rgba(255,255,255,.1);color:var(--txt2);box-shadow:none;}
+    .odds-tag{display:block;width:max-content;background:rgba(201,168,76,.18);color:var(--gold2);border:1px solid rgba(201,168,76,.24);border-radius:999px;padding:4px 7px;margin:7px 0 0 104px;font-family:'DM Mono',monospace;font-size:11px;line-height:1;}
+    .odds-tag .boost-badge{min-width:auto;padding:2px 6px;margin-left:4px;font-size:11px;vertical-align:middle;}
+    .player-name-cell{display:flex;align-items:center;gap:12px;min-width:0;cursor:pointer;}
+    .player-name-text{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;line-height:1.05;}
+    .drow:hover .photo-frame.mini{border-color:rgba(201,168,76,.35);}
+    .scorecard-head{display:flex;gap:12px;align-items:center;margin-bottom:16px;}
+    .scorecard-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);line-height:1.05;}
+    .scorecard-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--txt3);margin-top:4px;}
+    .scorecard-grid{display:grid;grid-template-columns:1fr 54px 54px 54px;gap:6px;align-items:center;}
+    .scorecard-grid div{font-family:'DM Mono',monospace;font-size:12px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.06);}
+    .scorecard-grid div:nth-child(4n+2),.scorecard-grid div:nth-child(4n+3),.scorecard-grid div:nth-child(4n+4){text-align:center;}
+    @media(max-width:390px){
+      .wrap{padding:0 12px;}
+      .din{padding:13px 14px 16px;}
+      .dhead,.drow{grid-template-columns:1fr 48px 42px 58px;gap:5px;}
+      .photo-frame.mini{width:78px;height:92px;}
+      .player-name-cell{gap:9px;}
+      .player-name-text{font-size:15px;}
+      .odds-tag{margin-left:87px;font-size:10px;}
+      .pick-row{grid-template-columns:76px 1fr;gap:10px;}
+      .photo-frame.pick{width:76px;height:88px;}
+    }
     /* HEADER BUTTONS */
     .header-btns{position:absolute;top:28px;right:0;display:flex;gap:8px;}
     .btn-icon{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;font-size:16px;cursor:pointer;color:var(--txt2);transition:background .2s;}
@@ -160,12 +213,15 @@
 
   <div class="sync-indicator" id="syncIndicator">⏳ Synchronisation Firebase...</div>
 
+  <div id="entryZone"></div>
+
   <div class="tabs" id="tabs" style="display:none"></div>
   <div id="bzone"></div>
   <div id="daynote" class="day-note" style="display:none"></div>
   <div class="podium" id="pzone">
     <div class="skel"></div><div class="skel"></div><div class="skel"></div>
   </div>
+  <div id="settingsZone"></div>
 
   <footer>MajorBet · Données ESPN + Firebase · Paris entre amis</footer>
 </div>
@@ -193,24 +249,115 @@ const db=getFirestore(app);
 //  CONSTANTES
 // ══════════════════════════════════════════════════════
 const MAJOR_NAMES=['masters','pga championship','u.s. open','us open','the open championship','open championship'];
-const POS_TABLE=[{m:1,p:25},{m:2,p:18},{m:3,p:12},{m:10,p:0},{m:20,p:0},{m:30,p:0}];
-const PALIER_TABLE=[{m:10,p:8},{m:20,p:5},{m:30,p:3}];
-
-function posPts(r){if(!r||r<1)return 0;for(const x of POS_TABLE)if(r<=x.m)return x.p;return 0;}
-function palierPts(r){if(!r||r<1)return 0;for(const x of PALIER_TABLE)if(r<=x.m)return x.p;return 0;}
-function totalRankPts(r){return posPts(r)+palierPts(r);}
-
-// ══════════════════════════════════════════════════════
-//  PIXEL ART
-// ══════════════════════════════════════════════════════
-const SVG_STAR=`<svg width="34" height="34" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" class="ppx"><rect x="3" y="0" width="2" height="2" fill="#FFD700"/><rect x="0" y="2" width="8" height="2" fill="#FFD700"/><rect x="1" y="4" width="2" height="1" fill="#FFD700"/><rect x="5" y="4" width="2" height="1" fill="#FFD700"/><rect x="0" y="5" width="2" height="3" fill="#FFC200"/><rect x="6" y="5" width="2" height="3" fill="#FFC200"/><rect x="3" y="5" width="2" height="2" fill="#FFD700"/><rect x="2" y="1" width="1" height="1" fill="#FFF5AA" opacity=".5"/></svg>`;
-const SVG_WINE=`<svg width="26" height="34" viewBox="0 0 6 9" xmlns="http://www.w3.org/2000/svg" class="ppx"><rect x="1" y="0" width="4" height="1" fill="#9B2335"/><rect x="0" y="1" width="6" height="1" fill="#B52A40"/><rect x="0" y="2" width="6" height="2" fill="#C93050"/><rect x="1" y="4" width="4" height="1" fill="#A52840"/><rect x="2" y="5" width="2" height="2" fill="#8B1E2E"/><rect x="1" y="7" width="4" height="1" fill="#8B1E2E"/><rect x="0" y="8" width="6" height="1" fill="#6B1020"/><rect x="1" y="1" width="1" height="1" fill="#E86890" opacity=".5"/></svg>`;
-const SVG_MEAT=`<svg width="38" height="28" viewBox="0 0 10 7" xmlns="http://www.w3.org/2000/svg" class="ppx"><rect x="5" y="0" width="2" height="1" fill="#7B4E2D"/><rect x="5" y="1" width="1" height="2" fill="#7B4E2D"/><rect x="0" y="2" width="10" height="1" fill="#C0392B"/><rect x="0" y="3" width="10" height="2" fill="#E74C3C"/><rect x="0" y="5" width="10" height="1" fill="#C0392B"/><rect x="1" y="6" width="8" height="1" fill="#A93226"/><rect x="2" y="3" width="2" height="1" fill="#F1948A" opacity=".55"/><rect x="5" y="2" width="2" height="1" fill="#F1948A" opacity=".35"/></svg>`;
-const PRIZES=[
-  {svg:SVG_STAR,cls:'c1',label:'🏆 Vainqueur — ne paye rien !'},
-  {svg:SVG_WINE,cls:'c2',label:'🍷 2ème — paye le vin'},
-  {svg:SVG_MEAT,cls:'c3',label:'🥩 3ème — paye la viande'}
+const IS_TEST_MODE=new URLSearchParams(location.search).has('test');
+const DEMO_PLAYERS=[
+  ['Rory McIlroy',4.8],['Collin Morikawa',7.5],['Ludvig Åberg',10],['Viktor Hovland',13],
+  ['Tommy Fleetwood',18],['Patrick Cantlay',22],['Shane Lowry',28],['Hideki Matsuyama',34],
+  ['Robert MacIntyre',42],['Matt Fitzpatrick',48],['Jason Day',55],['Max Homa',65],
+  ['Justin Rose',80],['Alex Noren',95],['Brian Harman',110],['Min Woo Lee',130],
+  ['Ryan Fox',150],['Russell Henley',180],['Tom Kim',220],['Akshay Bhatia',250],
+  ['Sam Burns',300],['Wyndham Clark',350],['Sungjae Im',400],['Maverick McNealy',500]
 ];
+const DEFAULT_RULES={
+  position:{first:25,second:18,third:12},
+  tiers:{top10:8,top20:5,top30:3},
+  scorePerStroke:1,
+  cutMade:2,
+  cutMissed:-5,
+  exactWinner:10,
+  round4Multiplier:2,
+  fantasyBudget:100
+};
+
+function cloneRules(){return JSON.parse(JSON.stringify(DEFAULT_RULES));}
+function demoParticipants(){
+  return [
+    {id:'morgan-demo',name:'Morgan',golfers:['Shane Lowry','Ludvig Åberg','Tommy Fleetwood','Jason Day'],guess:0,budgetUsed:88},
+    {id:'baptiste-demo',name:'Baptiste',golfers:['Rory McIlroy','Collin Morikawa','Viktor Hovland','Max Homa'],guess:-8,budgetUsed:96},
+    {id:'chris-demo',name:'Chris',golfers:['Robert MacIntyre','Matt Fitzpatrick','Brian Harman','Ryan Fox'],guess:-5,budgetUsed:64}
+  ];
+}
+function normalizeParticipants(list){
+  const clean=Array.isArray(list)?list:[];
+  return IS_TEST_MODE&&!clean.length?demoParticipants():clean;
+}
+function mergeRules(saved){
+  return {
+    ...cloneRules(),
+    ...(saved||{}),
+    position:{...DEFAULT_RULES.position,...(saved?.position||{})},
+    tiers:{...DEFAULT_RULES.tiers,...(saved?.tiers||{})}
+  };
+}
+function signed(n){return n>0?`+${n}`:`${n}`;}
+function posPts(r){
+  if(!r||r<1)return 0;
+  if(r===1)return gScoringRules.position.first;
+  if(r===2)return gScoringRules.position.second;
+  if(r===3)return gScoringRules.position.third;
+  return 0;
+}
+function palierPts(r){
+  if(!r||r<1)return 0;
+  if(r<=10)return gScoringRules.tiers.top10;
+  if(r<=20)return gScoringRules.tiers.top20;
+  if(r<=30)return gScoringRules.tiers.top30;
+  return 0;
+}
+function totalRankPts(r){return posPts(r)+palierPts(r);}
+function multLabel(mult){return mult!==1?`×${mult}`:'';}
+function playerCost(odds){
+  if(!odds||odds<=0)return 5;
+  return Math.max(5,Math.min(55,Math.round(100/Math.sqrt(odds))));
+}
+function oddsMultiplier(odds){
+  if(!odds||odds<=0)return 1;
+  if(odds<=6)return .45;
+  if(odds<=10)return .6;
+  if(odds<=18)return .8;
+  if(odds<=30)return 1;
+  if(odds<=50)return 1.25;
+  if(odds<=80)return 1.6;
+  if(odds<=125)return 2;
+  if(odds<=200)return 2.5;
+  return 3;
+}
+function boostClass(mult){
+  if(mult>=2)return 'fire';
+  if(mult>1)return 'hot';
+  if(mult<1)return 'cold';
+  return '';
+}
+function boostBadge(mult){
+  return `<span class="boost-badge ${boostClass(mult)}">×${mult}</span>`;
+}
+function oddsTagHTML(oddsInfo){
+  if(!oddsInfo)return '';
+  return `<span class="odds-tag">${oddsInfo.odds.toFixed(1)} cote ${boostBadge(oddsInfo.multiplier)}</span>`;
+}
+function choiceSignalHTML(oddsInfo){
+  if(!oddsInfo)return '';
+  return `<div class="choice-signal">
+    <span>Cote <strong>${oddsInfo.odds.toFixed(2)}</strong> · Coût <strong>${oddsInfo.cost}</strong> pts</span>
+    ${boostBadge(oddsInfo.multiplier)}
+  </div>`;
+}
+function demoOddsData(){
+  return {
+    sportKey:'demo_major',
+    sportLabel:'Majeur de test',
+    region:'demo',
+    importedAt:new Date().toISOString(),
+    players:DEMO_PLAYERS.map(([name,odds])=>({
+      name,
+      normName:norm(name),
+      odds,
+      cost:playerCost(odds),
+      multiplier:oddsMultiplier(odds),
+      books:3
+    }))
+  };
+}
 
 // ══════════════════════════════════════════════════════
 //  HELPERS
@@ -219,6 +366,25 @@ function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\
 function fmtStp(n){if(n===null||n===undefined)return{t:'—',c:''};if(n===0)return{t:'E',c:'even'};return n<0?{t:`${n}`,c:'under'}:{t:`+${n}`,c:'over'};}
 function ts(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
 function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';}
+function setOddsData(data){
+  if(IS_TEST_MODE&&(!data||!(data.players||[]).length))data=demoOddsData();
+  gOddsData=data||null;
+  gOddsPlayers=(gOddsData?.players||[]).map(p=>({
+    ...p,
+    normName:p.normName||norm(p.name),
+    cost:p.cost??playerCost(p.odds),
+    multiplier:p.multiplier??oddsMultiplier(p.odds)
+  }));
+  gOddsByNorm=Object.fromEntries(gOddsPlayers.map(p=>[p.normName,p]));
+  renderEntryForm();
+}
+function getOddsInfo(name){
+  const n=norm(name);
+  if(gOddsByNorm[n])return gOddsByNorm[n];
+  const last=n.split(' ').pop();
+  if(last&&last.length>3)return gOddsPlayers.find(p=>p.normName.includes(last))||null;
+  return null;
+}
 
 // ══════════════════════════════════════════════════════
 //  FIREBASE : lecture participants + scores figés
@@ -226,17 +392,23 @@ function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.in
 let gParticipants=[];
 let gFrozenRounds={};  // { "masters_2026": { 1: {morganId: pts, ...}, 2: {...} } }
 let gCutLines={};      // { "masters_2026": 4 } -> cutLine en score relatif au par (ex: +4)
+let gScoringRules=cloneRules();
+let gOddsData=null;
+let gOddsPlayers=[];
+let gOddsByNorm={};
 let gTournKey='';
+const MY_ENTRY_KEY='majorbet_my_entry_id';
+const ENTRY_DRAFT_KEY='majorbet_entry_draft';
 
 async function loadFromFirebase(){
   try{
     // Participants
     const partDoc=await getDoc(doc(db,'config','participants'));
     if(partDoc.exists()){
-      gParticipants=partDoc.data().list||[];
+      gParticipants=normalizeParticipants(partDoc.data().list);
     }else{
       // Participants par défaut si Firebase vide
-      gParticipants=[
+      gParticipants=IS_TEST_MODE?demoParticipants():[
         {id:'morgan',  name:'Morgan',  golfers:['Justin Rose','Shane Lowry','Tommy Fleetwood','Jason Day'], guess:-11},
         {id:'baptiste',name:'Baptiste',golfers:['Rory McIlroy','Tommy Fleetwood','Ludvig Åberg','Max Homa'], guess:-12},
         {id:'chris',   name:'Chris',   golfers:['Matt Fitzpatrick','Rory McIlroy','Ludvig Åberg','Xander Schauffele'], guess:-17}
@@ -255,7 +427,14 @@ async function loadFromFirebase(){
       gCutLines=cutDoc.data()||{};
     }
 
+    const rulesDoc=await getDoc(doc(db,'config','scoringRules'));
+    gScoringRules=mergeRules(rulesDoc.exists()?rulesDoc.data():null);
+
+    const oddsDoc=await getDoc(doc(db,'config','odds'));
+    setOddsData(oddsDoc.exists()?oddsDoc.data():null);
+
     updateHeaderNames();
+    renderRulesModal();
     document.getElementById('syncIndicator').textContent='✅ Synchronisé Firebase';
     document.getElementById('syncIndicator').className='sync-indicator synced';
   }catch(e){
@@ -285,8 +464,9 @@ async function saveFrozenToFirebase(tournKey,roundNum,pointsByGolfer){
 function listenFirebase(){
   onSnapshot(doc(db,'config','participants'),(snap)=>{
     if(snap.exists()){
-      gParticipants=snap.data().list||[];
+      gParticipants=normalizeParticipants(snap.data().list);
       updateHeaderNames();
+      renderEntryForm();
       if(gParsed)renderPodium(gParsed);
     }
   });
@@ -305,12 +485,249 @@ function listenFirebase(){
       }
     }
   });
+  onSnapshot(doc(db,'config','scoringRules'),(snap)=>{
+    gScoringRules=mergeRules(snap.exists()?snap.data():null);
+    renderRulesModal();
+    renderEntryForm();
+    if(gParsed)renderPodium(gParsed);
+  });
+  onSnapshot(doc(db,'config','odds'),(snap)=>{
+    setOddsData(snap.exists()?snap.data():null);
+    if(gParsed)renderPodium(gParsed);
+  });
 }
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function jsStr(s){
+  return String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
+}
+function photoSlug(name){
+  return norm(name).replace(/\s+/g,'-');
+}
+function headshotUrl(name){
+  return `assets/headshots/${photoSlug(name)}.png`;
+}
+function photoHTML(name,kind='mini',id=''){
+  const idAttr=id?` id="${id}"`:'';
+  const src=name?headshotUrl(name):'';
+  const img=src?`<img src="${src}" alt="" onerror="this.style.display='none'"/>`:'';
+  return `<span class="photo-frame ${kind}"${idAttr}>${img}<span class="photo-empty">+</span></span>`;
+}
+function playerNameHTML(name,clickName=''){
+  const click=clickName?` onclick="event.stopPropagation();window.openPlayerCard('${jsStr(clickName)}')"`:'';
+  return `<span class="player-name-cell"${click}>${photoHTML(name,'mini')}<span class="player-name-text">${esc(name)}</span></span>`;
+}
+
+function selectedTeam(){
+  return [1,2,3,4].map(i=>document.getElementById(`entryGolfer${i}`)?.value.trim()||'');
+}
+
+function teamCost(golfers){
+  return golfers.reduce((sum,g)=>sum+(getOddsInfo(g)?.cost||0),0);
+}
+
+function entryDraft(){
+  try{return JSON.parse(localStorage.getItem(ENTRY_DRAFT_KEY)||'{}');}
+  catch{return {};}
+}
+function saveEntryDraft(){
+  if(myParticipant())return;
+  const name=document.getElementById('entryName')?.value||'';
+  const golfers=[1,2,3,4].map(i=>document.getElementById(`entryGolfer${i}`)?.value||'');
+  localStorage.setItem(ENTRY_DRAFT_KEY,JSON.stringify({name,golfers,updatedAt:Date.now()}));
+}
+function clearEntryDraft(){
+  localStorage.removeItem(ENTRY_DRAFT_KEY);
+}
+
+function myEntryId(){return localStorage.getItem(MY_ENTRY_KEY)||'';}
+function myParticipant(){
+  const id=myEntryId();
+  return id?gParticipants.find(p=>p.id===id)||null:null;
+}
+function canEditGuess(){
+  return !gParsed||!gParsed.currentRound||gParsed.currentRound<=1;
+}
+
+function renderEntryForm(){
+  const zone=document.getElementById('entryZone');
+  const settingsZone=document.getElementById('settingsZone');
+  if(!zone)return;
+  const budget=gScoringRules.fantasyBudget||100;
+  const mine=myParticipant();
+  if(mine){
+    zone.innerHTML='';
+    if(!settingsZone)return;
+    const locked=!canEditGuess();
+    const golfers=(mine.golfers||[]).map(g=>{
+      const o=getOddsInfo(g);
+      return `<div class="entry-mini">${esc(g)}${o?` · cote ${o.odds.toFixed(2)} · ${o.cost} pts · ×${o.multiplier}`:''}</div>`;
+    }).join('');
+    settingsZone.innerHTML=`<div class="entry-panel">
+      <div class="entry-head">
+        <div class="entry-title">Paramètres de la partie</div>
+        <div class="budget-pill">Budget ${mine.budgetUsed??teamCost(mine.golfers||[])}/${budget}</div>
+      </div>
+      <div class="entry-grid">
+        <div class="entry-row">
+          <span class="entry-label">Nom</span>
+          <input class="entry-input" id="settingsName" value="${esc(mine.name||'')}" placeholder="Ton prénom"/>
+        </div>
+        <div class="entry-row">
+          <span class="entry-label">Score final</span>
+          <input class="entry-input" id="settingsGuess" type="number" value="${mine.guess??''}" placeholder="Ex: -11" ${locked?'disabled':''}/>
+        </div>
+      </div>
+      <div class="entry-meta">${locked?'Pronostic score final bloqué à partir du J2.':'Pronostic score final modifiable jusqu’à la fin du J1.'}</div>
+      <div class="entry-meta"><strong>Équipe validée</strong>${golfers}</div>
+      <div class="entry-actions">
+        <button class="btn" onclick="window.saveEntrySettings()">Enregistrer</button>
+      </div>
+    </div>`;
+    return;
+  }
+  if(settingsZone)settingsZone.innerHTML='';
+  if(!gOddsPlayers.length){
+    zone.innerHTML=`<div class="entry-panel">
+      <div class="entry-head">
+        <div class="entry-title">Créer mon pari</div>
+        <div class="budget-pill">${budget} pts</div>
+      </div>
+      <div class="entry-meta">Importe les cotes dans le configurateur pour activer la sélection avec budget.</div>
+    </div>`;
+    return;
+  }
+  if(document.getElementById('entryName')){
+    window.updateEntryBudget();
+    return;
+  }
+  const draft=entryDraft();
+  const options=gOddsPlayers.map(p=>`<option value="${esc(p.name)}">${p.odds.toFixed(2)} · ${p.cost} pts · ×${p.multiplier}</option>`).join('');
+  const imported=gOddsData?.importedAt?new Date(gOddsData.importedAt).toLocaleString('fr-FR'):'date inconnue';
+  zone.innerHTML=`<div class="entry-panel">
+    <div class="entry-head">
+      <div class="entry-title">Créer mon pari</div>
+      <div class="budget-pill" id="entryBudget">Budget ${budget}/${budget}</div>
+    </div>
+    <div class="entry-grid">
+      <div class="entry-row">
+        <span class="entry-label">Nom</span>
+        <input class="entry-input" id="entryName" placeholder="Ton prénom" value="${esc(draft.name||'')}" oninput="window.updateEntryBudget()"/>
+      </div>
+      ${[1,2,3,4].map(i=>`<div class="pick-row">
+        ${photoHTML(draft.golfers?.[i-1]||'','pick',`entryPhoto${i}`)}
+        <div class="pick-field">
+          <div class="entry-row">
+            <span class="entry-label">Joueur ${i}</span>
+            <input class="entry-input" id="entryGolfer${i}" list="oddsPlayers" placeholder="Rechercher un joueur" value="${esc(draft.golfers?.[i-1]||'')}" oninput="window.updateEntryBudget()"/>
+          </div>
+          <div class="entry-mini" id="entryInfo${i}"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <datalist id="oddsPlayers">${options}</datalist>
+    <div class="entry-meta">Cotes figées: <strong>${esc(gOddsData?.sportLabel||'Majeur')}</strong> · ${imported}. Les favoris coûtent cher et rapportent moins; les outsiders coûtent peu et multiplient les points positifs.</div>
+    <div class="entry-actions">
+      <button class="btn" onclick="window.saveEntryTeam()">Valider mon équipe</button>
+    </div>
+  </div>`;
+  window.updateEntryBudget();
+}
+
+window.updateEntryBudget=function(){
+  saveEntryDraft();
+  const budget=gScoringRules.fantasyBudget||100;
+  const golfers=selectedTeam();
+  const cost=teamCost(golfers);
+  const el=document.getElementById('entryBudget');
+  if(el){
+    el.textContent=`Budget ${Math.max(0,budget-cost)}/${budget}`;
+    el.style.color=cost>budget?'#fca5a5':'var(--gold2)';
+  }
+  golfers.forEach((g,idx)=>{
+    const info=document.getElementById(`entryInfo${idx+1}`);
+    const frame=document.getElementById(`entryPhoto${idx+1}`);
+    const odds=getOddsInfo(g);
+    if(info)info.innerHTML=choiceSignalHTML(odds);
+    if(frame){
+      frame.innerHTML=g?`<img src="${headshotUrl(g)}" alt="" onerror="this.style.display='none'"/><span class="photo-empty">+</span>`:'<span class="photo-empty">+</span>';
+    }
+  });
+};
+
+window.saveEntrySettings=async function(){
+  const mine=myParticipant();
+  if(!mine)return;
+  const name=document.getElementById('settingsName')?.value.trim();
+  const rawGuess=document.getElementById('settingsGuess')?.value;
+  if(!name){
+    setBanner('Le nom ne peut pas être vide.','binfo');
+    return;
+  }
+  try{
+    const next=gParticipants.map(p=>{
+      if(p.id!==mine.id)return p;
+      const updated={...p,name};
+      if(canEditGuess()&&rawGuess!=='')updated.guess=parseInt(rawGuess,10);
+      return updated;
+    });
+    await setDoc(doc(db,'config','participants'),{list:next});
+    setBanner('Paramètres de ta partie enregistrés.','binfo');
+  }catch(e){
+    setBanner(`Erreur sauvegarde paramètres : ${esc(e.message)}`,'berr');
+  }
+};
+
+window.saveEntryTeam=async function(){
+  const name=document.getElementById('entryName')?.value.trim();
+  const golfers=selectedTeam();
+  const budget=gScoringRules.fantasyBudget||100;
+  if(!name){
+    setBanner('Renseigne ton prénom avant de valider ton équipe.','binfo');
+    return;
+  }
+  if(golfers.some(g=>!g)){
+    setBanner('Choisis 4 joueurs avant de valider ton équipe.','binfo');
+    return;
+  }
+  const unique=new Set(golfers.map(norm));
+  if(unique.size!==4){
+    setBanner('Chaque joueur ne peut être choisi qu’une seule fois dans ton équipe.','binfo');
+    return;
+  }
+  const missing=golfers.filter(g=>!getOddsInfo(g));
+  if(missing.length){
+    setBanner(`Joueur introuvable dans les cotes importées : ${esc(missing.join(', '))}`,'binfo');
+    return;
+  }
+  const cost=teamCost(golfers);
+  if(cost>budget){
+    setBanner(`Budget dépassé : ${cost}/${budget} pts. Remplace un favori par un joueur moins cher.`,'berr');
+    return;
+  }
+  try{
+    const id=norm(name).replace(/\s+/g,'-')||Math.random().toString(36).slice(2,9);
+    const oddsMeta=golfers.map(g=>getOddsInfo(g));
+    const existing=gParticipants.filter(p=>p.id!==id&&norm(p.name)!==norm(name));
+    const next=[...existing,{id,name,golfers,guess:0,budgetUsed:cost,oddsMeta,createdAt:new Date().toISOString()}];
+    await setDoc(doc(db,'config','participants'),{list:next});
+    localStorage.setItem(MY_ENTRY_KEY,id);
+    clearEntryDraft();
+    setBanner(`Équipe validée : ${cost}/${budget} pts utilisés.`,'binfo');
+    gParticipants=next;
+    renderEntryForm();
+  }catch(e){
+    setBanner(`Erreur sauvegarde équipe : ${esc(e.message)}`,'berr');
+  }
+};
 
 // ══════════════════════════════════════════════════════
 //  ESPN FETCH — uniquement les Majeurs
 // ══════════════════════════════════════════════════════
 async function fetchESPN(){
+  if(IS_TEST_MODE)return{event:demoEvent(),found:true};
   const urls=[
     'https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard',
     'https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?dates=20260409',
@@ -327,6 +744,34 @@ async function fetchESPN(){
     }catch(e){/* next */}
   }
   throw new Error("L'API ESPN est inaccessible.");
+}
+
+function demoEvent(){
+  const scores=[
+    [-4,-3,-2,-5],[-2,-4,-1,-3],[-3,-1,-2,-2],[-1,-2,-3,-1],
+    [0,-3,-1,-2],[-2,1,-2,-1],[1,-2,0,-3],[-1,0,-2,-1],
+    [2,-1,-1,-2],[0,1,-2,-1],[-2,2,1,-1],[1,-1,0,0],
+    [3,0,-2,1],[2,1,0,-1],[4,0,1,-2],[1,3,0,0],
+    [5,2,0,-1],[3,4,1,0],[6,2,0,1],[4,3,2,0],
+    [7,1,2,1],[5,4,2,2],[8,3,1,2],[6,5,3,1]
+  ];
+  const competitors=DEMO_PLAYERS.map(([name],i)=>{
+    const rounds=scores[i]||[0,0,0,0];
+    const total=rounds.reduce((a,b)=>a+b,0);
+    return {
+      athlete:{displayName:name,fullName:name},
+      score:total===0?'E':String(total),
+      displayScore:total===0?'E':(total>0?`+${total}`:String(total)),
+      linescores:rounds.map(v=>({displayValue:v===0?'E':(v>0?`+${v}`:String(v))}))
+    };
+  });
+  return {
+    name:'Masters Tournament',
+    competitions:[{
+      status:{period:4,type:{name:'STATUS_IN_PROGRESS'}},
+      competitors
+    }]
+  };
 }
 
 // ══════════════════════════════════════════════════════
@@ -351,6 +796,7 @@ function parseEvent(ev){
   const year=new Date().getFullYear();
   const majorKey=MAJOR_NAMES.find(m=>norm(ev.name||'').includes(m))||'unknown';
   const tournKey=`${majorKey}_${year}`;
+  if(IS_TEST_MODE&&gCutLines[tournKey]===undefined)gCutLines[tournKey]=3;
 
   const raw=[];
   for(const c of(ev.competitions||[])){
@@ -419,16 +865,20 @@ function calcPtsForRound(player,roundNum){
   if(rank===undefined||rank===null)return{pts:0,nf:false,noData:true};
   const score=player.roundScores[roundNum];
   if(score===undefined)return{pts:0,nf:false,noData:true};
-  const mult=roundNum===4?2:1;
+  const roundMult=roundNum===4?gScoringRules.round4Multiplier:1;
+  const oddsInfo=getOddsInfo(player.displayName);
+  const oddsMult=oddsInfo?.multiplier||1;
   const rankPts=totalRankPts(rank);
-  const scorePts=-score;  // -(-7)=+7 / -(+3)=-3
-  const pts=(rankPts+scorePts)*mult;
-  return{pts,rankPts,scorePts,rank,score,mult,nf:false};
+  const scorePts=-score*gScoringRules.scorePerStroke;  // -(-7)=+7 / -(+3)=-3
+  const basePts=rankPts+scorePts;
+  const boostedPts=basePts>0?Math.round(basePts*oddsMult):basePts;
+  const pts=Math.round(boostedPts*roundMult);
+  return{pts,rankPts,scorePts,basePts,oddsPts:boostedPts,rank,score,mult:roundMult,oddsMult,odds:oddsInfo?.odds,cost:oddsInfo?.cost,nf:false};
 }
 
 function calcCutBonus(player){
   if(!player)return 0;
-  return player.madeCut===false?-5:player.madeCut===true?2:0;
+  return player.madeCut===false?gScoringRules.cutMissed:player.madeCut===true?gScoringRules.cutMade:0;
 }
 
 function matchPlayer(gName,players){
@@ -444,6 +894,7 @@ function matchPlayer(gName,players){
 //  AUTO-FREEZE : fige automatiquement les rounds terminés dans Firebase
 // ══════════════════════════════════════════════════════
 async function autoFreezeCompletedRounds(parsed){
+  if(IS_TEST_MODE)return;
   const{players,currentRound,isFinal,tournKey}=parsed;
   const frozen=gFrozenRounds[tournKey]||{};
 
@@ -461,7 +912,7 @@ async function autoFreezeCompletedRounds(parsed){
     for(const ep of players){
       const c=calcPtsForRound(ep,r);
       if(!c.nf&&!c.noData){
-        pointsByPlayer[ep.normName]={pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,rank:c.rank,score:c.score};
+        pointsByPlayer[ep.normName]={pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,basePts:c.basePts,oddsPts:c.oddsPts,rank:c.rank,score:c.score,mult:c.mult,oddsMult:c.oddsMult,odds:c.odds,cost:c.cost};
       }
     }
     const hovlandEntry = pointsByPlayer['viktor hovland'];
@@ -533,7 +984,7 @@ function renderPodium(parsed){
     dayNote.style.display='block';
     const rNames=['','Round 1','Round 2','Round 3','Round 4'];
     const isFroz=frozen[roundNum];
-    const multNote=roundNum===4?' · <strong>×2</strong>':'';
+    const multNote=roundNum===4&&gScoringRules.round4Multiplier!==1?` · <strong>${multLabel(gScoringRules.round4Multiplier)}</strong>`:'';
     const frozNote=isFroz?' · <span style="color:#94a3b8">figé 🔒</span>':'· live';
     dayNote.innerHTML=`${rNames[roundNum]}${multNote} ${frozNote}`;
   }
@@ -553,13 +1004,13 @@ function renderPodium(parsed){
             const epNorm=ep?ep.normName:'';
             const fd=frozRound[epNorm];
             const pts=fd?fd.pts:0;
-            byRound.push({r,pts,frozen:true,mult:r===4?2:1});
+            byRound.push({r,pts,frozen:true,mult:fd?.mult??(r===4?gScoringRules.round4Multiplier:1),oddsMult:fd?.oddsMult,odds:fd?.odds});
             sumPts+=pts;
           }else{
             // Round live
             const c=calcPtsForRound(ep,r);
             if(!c.nf&&!c.noData){
-              byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,frozen:false,mult:c.mult});
+              byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,frozen:false,mult:c.mult,oddsMult:c.oddsMult,odds:c.odds});
               sumPts+=c.pts;
             }
           }
@@ -577,7 +1028,7 @@ function renderPodium(parsed){
           const fd=frozRound[epNorm];
           pts=fd?fd.pts:0;
           // Reconstruit c pour l'affichage
-          c={pts,rankPts:fd?.rankPts,scorePts:fd?.scorePts,rank:fd?.rank,score:fd?.score,mult:roundNum===4?2:1,nf:false};
+          c={pts,rankPts:fd?.rankPts,scorePts:fd?.scorePts,rank:fd?.rank,score:fd?.score,mult:fd?.mult??(roundNum===4?gScoringRules.round4Multiplier:1),oddsMult:fd?.oddsMult,odds:fd?.odds,cost:fd?.cost,nf:false};
           isFrozenData=true;
         }else{
           c=calcPtsForRound(ep,roundNum);
@@ -589,7 +1040,7 @@ function renderPodium(parsed){
     });
 
     const bonusOK=isTotal&&isFinal&&leader&&part.guess===leader.stpTotal;
-    if(bonusOK)total+=10;
+    if(bonusOK)total+=gScoringRules.exactWinner;
     return{...part,total,detail,bonusOK,leaderStp:leader?.stpTotal??null};
   });
 
@@ -599,7 +1050,6 @@ function renderPodium(parsed){
   zone.innerHTML='';
 
   results.forEach((p,idx)=>{
-    const pr=PRIZES[Math.min(idx,2)];
     const rk=idx+1;
     const card=document.createElement('div');
     card.className=`pcard r${Math.min(rk,3)}`;
@@ -607,7 +1057,9 @@ function renderPodium(parsed){
 
     const rows=p.detail.map(d=>{
       const{name,ep}=d;
-      if(!ep||d.nf)return`<div class="drow"><span class="dn">${name}</span><span class="dp nf">?</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
+      const oddsInfo=ep?getOddsInfo(ep.displayName)||getOddsInfo(name):getOddsInfo(name);
+      const oddsTag=oddsTagHTML(oddsInfo);
+      if(!ep||d.nf)return`<div class="drow"><span class="dn">${playerNameHTML(name)}${oddsTag}</span><span class="dp nf">?</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
 
       if(d.isTotal){
         const s=fmtStp(ep.stpTotal);
@@ -616,10 +1068,10 @@ function renderPodium(parsed){
         const posCls=ep.madeCut===false?'cut':ep.rank&&ep.rank<=3?'top3':'';
         const ptsCls=d.sumPts<0?'neg':d.sumPts===0?'zero':'';
         const sign=d.sumPts>=0?'+':'';
-        const breakdown=d.byRound.map(b=>`J${b.r}:${b.pts>=0?'+':''}${b.pts}${b.mult===2?'×2':''}${b.frozen?'🔒':''}`).join(' ');
+        const breakdown=d.byRound.map(b=>`J${b.r}:${b.pts>=0?'+':''}${b.pts}${b.oddsMult&&b.oddsMult!==1?'×'+b.oddsMult:''}${multLabel(b.mult)}${b.frozen?'🔒':''}`).join(' ');
         const cutStr=d.cutBonus!==0?(d.cutBonus>0?` cut:+${d.cutBonus}`:`cut:${d.cutBonus}`):'';
         return`<div class="drow">
-          <span class="dn">${name}</span>
+          <span class="dn">${playerNameHTML(name,ep.displayName)}${oddsTag}</span>
           <span class="dp ${posCls}">${posLbl}</span>
           <span class="ds ${s.c}">${s.t}</span>
           <div style="text-align:right">
@@ -628,21 +1080,21 @@ function renderPodium(parsed){
           </div>
         </div>`;
       }else{
-        if(d.noData)return`<div class="drow"><span class="dn">${name}</span><span class="dp nf">—</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
+        if(d.noData)return`<div class="drow"><span class="dn">${playerNameHTML(name,ep?.displayName||'')}</span><span class="dp nf">—</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
         const s=fmtStp(d.score);
         const sameRankR=d.rank?players.filter(pl=>pl.rank===d.rank).length:0;
         const posLbl=d.rank?(sameRankR>1?`T${d.rank}`:`${d.rank}`+(d.rank===1?'er':'e')):'—';
         const posCls=d.rank&&d.rank<=3?'top3':'';
         const ptsCls=d.pts<0?'neg':d.pts===0?'zero':'';
         const sign=d.pts>=0?'+':'';
-        const x2=d.mult===2?'<span class="x2b">×2</span>':'';
+        const x2=d.mult!==1?`<span class="x2b">${multLabel(d.mult)}</span>`:'';
         const frozIcon=d.frozen?'<span class="frozen-badge">🔒</span>':'';
         const rankPtsDisp=d.rankPts!==undefined?d.rankPts:null;
         const scorePtsDisp=d.scorePts!==undefined?d.scorePts:null;
         const detailSub=(rankPtsDisp!==null&&scorePtsDisp!==null)
-          ?`rang:+${rankPtsDisp} score:${scorePtsDisp>=0?'+':''}${scorePtsDisp}`:'';
+          ?`rang:+${rankPtsDisp} score:${scorePtsDisp>=0?'+':''}${scorePtsDisp}${d.oddsMult&&d.oddsMult!==1?' cote:×'+d.oddsMult:''}`:'';
         return`<div class="drow">
-          <span class="dn">${name}</span>
+          <span class="dn">${playerNameHTML(name,ep.displayName)}${oddsTag}</span>
           <span class="dp ${posCls}">${posLbl}</span>
           <span class="ds ${s.c}">${s.t}</span>
           <div style="text-align:right">
@@ -656,16 +1108,16 @@ function renderPodium(parsed){
     let extraHTML='';
     if(isTotal){
       extraHTML=p.bonusOK
-        ?`<div class="bonus-row"><span>🎯 Bonus score exact vainqueur</span><span>+10 pts</span></div>`
+        ?`<div class="bonus-row"><span>🎯 Bonus score exact vainqueur</span><span>${signed(gScoringRules.exactWinner)} pts</span></div>`
         :`<div class="pred">Pronostic : <strong>${p.guess}</strong>${isFinal&&p.leaderStp!==null?` · Réel : <strong>${p.leaderStp}</strong>`:''}</div>`;
     }
 
     card.innerHTML=`
 <div class="ptop" onclick="tog('${p.id}')">
-  <div class="rnum">${rk}</div>${pr.svg}
+  <div class="rnum">${rk}</div>
   <div class="pinfo">
     <div class="pname">${p.name}</div>
-    <div class="plabel ${pr.cls}">${isTotal?pr.label:(roundNum===4?'<span class="x2b">×2</span> points doublés':'Points du round')}</div>
+    <div class="plabel">${isTotal?(p.budgetUsed!==undefined?`Budget ${p.budgetUsed}/${gScoringRules.fantasyBudget||100}`:`${rk}${rk===1?'er':'e'} du classement`):(roundNum===4&&gScoringRules.round4Multiplier!==1?`<span class="x2b">${multLabel(gScoringRules.round4Multiplier)}</span> points du round`:'Points du round')}</div>
   </div>
   <div class="ppts">
     <div class="ppts-n">${p.total}</div>
@@ -709,6 +1161,67 @@ function updateHeaderNames(){
   document.getElementById('headerSub').textContent=names||'—';
 }
 
+function findParsedPlayer(name){
+  if(!gParsed)return null;
+  return matchPlayer(name,gParsed.players)||gParsed.players.find(p=>p.displayName===name)||null;
+}
+
+window.openPlayerCard=function(name){
+  const p=findParsedPlayer(name);
+  if(!p)return;
+  const overlay=document.getElementById('playerOverlay');
+  const body=document.getElementById('playerCardBody');
+  const stp=fmtStp(p.stpTotal);
+  const rank=p.madeCut===false?'CUT':p.rank?`${p.rank}${p.rank===1?'er':'e'}`:'—';
+  const rows=[1,2,3,4].map(r=>{
+    const v=p.roundScores?.[r];
+    const s=fmtStp(v);
+    return `<div>Round ${r}</div><div class="${s.c}">${s.t}</div><div>${r===gParsed.currentRound?'actuel':'—'}</div><div>${v===undefined?'—':v}</div>`;
+  }).join('');
+  body.innerHTML=`<div class="scorecard-head">
+    ${photoHTML(p.displayName,'hero')}
+    <div>
+      <div class="scorecard-name">${esc(p.displayName)}</div>
+      <div class="scorecard-sub">Rang ${rank} · Total <span class="${stp.c}">${stp.t}</span></div>
+    </div>
+  </div>
+  <div class="scorecard-grid">
+    <div>Carte</div><div>Score</div><div>Statut</div><div>Brut</div>
+    ${rows}
+  </div>
+  <div class="entry-meta">Carte basée sur les données disponibles dans ESPN. Le détail trou par trou pourra être ajouté si l’API le fournit pendant le tournoi.</div>`;
+  overlay.classList.add('open');
+};
+window.closePlayerCard=function(){document.getElementById('playerOverlay')?.classList.remove('open');};
+window.closePlayerCardIfOutside=function(e){if(e.target===document.getElementById('playerOverlay'))window.closePlayerCard();};
+
+function renderRulesModal(){
+  const rankRows=document.getElementById('rulesRankRows');
+  const scoreRows=document.getElementById('rulesScoreRows');
+  const miscRows=document.getElementById('rulesMiscRows');
+  if(!rankRows||!scoreRows||!miscRows)return;
+  const r=gScoringRules;
+  rankRows.innerHTML=`
+    <tr><td>🥇 1er</td><td class="pts-pos">${r.position.first} + ${r.tiers.top10} = <strong>${r.position.first+r.tiers.top10} pts</strong></td></tr>
+    <tr><td>🥈 2e</td><td class="pts-pos">${r.position.second} + ${r.tiers.top10} = <strong>${r.position.second+r.tiers.top10} pts</strong></td></tr>
+    <tr><td>🥉 3e</td><td class="pts-pos">${r.position.third} + ${r.tiers.top10} = <strong>${r.position.third+r.tiers.top10} pts</strong></td></tr>
+    <tr><td>4e → 10e</td><td class="pts-pos"><strong>${r.tiers.top10} pts</strong></td></tr>
+    <tr><td>11e → 20e</td><td class="pts-pos"><strong>${r.tiers.top20} pts</strong></td></tr>
+    <tr><td>21e → 30e</td><td class="pts-pos"><strong>${r.tiers.top30} pts</strong></td></tr>
+    <tr><td>31e et +</td><td style="color:var(--txt3)"><strong>0 pt</strong></td></tr>`;
+  scoreRows.innerHTML=`
+    <tr><td>Score sous le par (ex: -7)</td><td class="pts-bonus"><strong>${signed(7*r.scorePerStroke)} pts</strong></td></tr>
+    <tr><td>Score au par (E)</td><td style="color:var(--txt3)"><strong>0 pt</strong></td></tr>
+    <tr><td>Score au-dessus du par (ex: +3)</td><td class="pts-neg"><strong>${signed(-3*r.scorePerStroke)} pts</strong></td></tr>`;
+  miscRows.innerHTML=`
+    <tr><td>✂️ Cut passé</td><td class="pts-bonus"><strong>${signed(r.cutMade)} pts</strong></td></tr>
+    <tr><td>❌ Cut manqué</td><td class="pts-neg"><strong>${signed(r.cutMissed)} pts</strong></td></tr>
+    <tr><td>🎯 Bonus score exact vainqueur</td><td class="pts-bonus"><strong>${signed(r.exactWinner)} pts</strong></td></tr>
+    <tr><td>⚡ Round 4</td><td class="pts-x2"><strong>Points ${multLabel(r.round4Multiplier)||'×1'}</strong></td></tr>
+    <tr><td>💰 Budget équipe</td><td class="pts-pos"><strong>${r.fantasyBudget||100} pts</strong></td></tr>
+    <tr><td>📈 Cote joueur</td><td class="pts-x2"><strong>multiplie les points positifs</strong></td></tr>`;
+}
+
 // ══════════════════════════════════════════════════════
 //  MAIN LOOP (auto-refresh toutes les 90 secondes)
 // ══════════════════════════════════════════════════════
@@ -742,16 +1255,19 @@ async function fetchAndRender(){
     const{currentRound,isLive,isFinal}=parsed;
     const rn=['','Round 1','Round 2','Round 3','Round 4'][currentRound]||`Round ${currentRound}`;
     document.getElementById('dot').className='dot'+(isLive?' live':'idle');
-    document.getElementById('sround').textContent=rn+(isLive?' · EN DIRECT':isFinal?' · TERMINÉ':'');
+    document.getElementById('sround').textContent=(IS_TEST_MODE?'MODE TEST · ':'')+rn+(isLive?' · EN DIRECT':isFinal?' · TERMINÉ':'');
     document.getElementById('stime').textContent=ts();
 
     updateHeader(event.name);
     renderPodium(parsed);
+    renderEntryForm();
 
     // Avertit si la cut line n'est pas encore renseignée (à partir du round 3)
     const cutLineSet = gCutLines[parsed.tournKey]!==undefined && gCutLines[parsed.tournKey]!==null;
-    if(currentRound>=3 && !cutLineSet){
-      setBanner('⚠️ La <strong>cut line</strong> n\'a pas encore été saisie pour ce tournoi. Les bonus/malus de cut (+2/-5) ne sont pas appliqués. Ouvre le configurateur pour la renseigner.','binfo');
+    if(IS_TEST_MODE){
+      setBanner('Mode test actif : scores, cotes et leaderboard sont simulés. Ouvre l’application sans <strong>?test=1</strong> pour revenir au mode réel.','binfo');
+    }else if(currentRound>=3 && !cutLineSet){
+      setBanner('⚠️ La <strong>cut line</strong> n\'a pas encore été saisie pour ce tournoi. Les bonus/malus de cut ne sont pas appliqués. Ouvre le configurateur pour la renseigner.','binfo');
     }else{
       setBanner(null);
     }
@@ -791,13 +1307,7 @@ init();
     <div class="rules-section">
       <div class="rules-section-title">Points par rang (cumulé du tournoi)</div>
       <table class="rules-table">
-        <tr><td>🥇 1er</td><td class="pts-pos">25 + 8 = <strong>33 pts</strong></td></tr>
-        <tr><td>🥈 2e</td><td class="pts-pos">18 + 8 = <strong>26 pts</strong></td></tr>
-        <tr><td>🥉 3e</td><td class="pts-pos">12 + 8 = <strong>20 pts</strong></td></tr>
-        <tr><td>4e → 10e</td><td class="pts-pos"><strong>8 pts</strong></td></tr>
-        <tr><td>11e → 20e</td><td class="pts-pos"><strong>5 pts</strong></td></tr>
-        <tr><td>21e → 30e</td><td class="pts-pos"><strong>3 pts</strong></td></tr>
-        <tr><td>31e et +</td><td style="color:var(--txt3)"><strong>0 pt</strong></td></tr>
+        <tbody id="rulesRankRows"></tbody>
       </table>
     </div>
 
@@ -806,9 +1316,7 @@ init();
     <div class="rules-section">
       <div class="rules-section-title">Bonus score du jour</div>
       <table class="rules-table">
-        <tr><td>Score sous le par (ex: -7)</td><td class="pts-bonus"><strong>+7 pts</strong></td></tr>
-        <tr><td>Score au par (E)</td><td style="color:var(--txt3)"><strong>0 pt</strong></td></tr>
-        <tr><td>Score au-dessus du par (ex: +3)</td><td class="pts-neg"><strong>-3 pts</strong></td></tr>
+        <tbody id="rulesScoreRows"></tbody>
       </table>
     </div>
 
@@ -817,10 +1325,7 @@ init();
     <div class="rules-section">
       <div class="rules-section-title">Autres règles</div>
       <table class="rules-table">
-        <tr><td>✂️ Cut passé</td><td class="pts-bonus"><strong>+2 pts</strong></td></tr>
-        <tr><td>❌ Cut manqué</td><td class="pts-neg"><strong>-5 pts</strong></td></tr>
-        <tr><td>🎯 Bonus score exact vainqueur</td><td class="pts-bonus"><strong>+10 pts</strong></td></tr>
-        <tr><td>⚡ Round 4</td><td class="pts-x2"><strong>Tous les points ×2</strong></td></tr>
+        <tbody id="rulesMiscRows"></tbody>
       </table>
     </div>
 
@@ -831,6 +1336,16 @@ init();
       Les ex-aequo partagent le même rang.<br/>
       Le bonus score exact vainqueur n'est attribué qu'à la fin du Round 4.
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="playerOverlay" onclick="window.closePlayerCardIfOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Carte joueur</div>
+      <button class="modal-close" onclick="window.closePlayerCard()">✕</button>
+    </div>
+    <div id="playerCardBody"></div>
   </div>
 </div>
 

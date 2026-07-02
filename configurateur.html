@@ -43,6 +43,21 @@
     .field-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--txt3);}
     .field-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt1);outline:none;width:100%;transition:border-color .2s;}
     .field-input:focus{border-color:rgba(201,168,76,.4);}
+    .rules-grid{display:grid;grid-template-columns:1fr 92px;gap:8px 10px;align-items:center;}
+    .rules-label{font-size:12px;color:var(--txt2);font-family:'DM Mono',monospace;line-height:1.45;}
+    .rules-input{text-align:center;}
+    .rules-note{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;line-height:1.7;margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.035);border-left:2px solid rgba(201,168,76,.35);border-radius:8px;}
+    .odds-form{display:grid;gap:10px;}
+    .odds-row{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;}
+    .odds-status{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;line-height:1.6;margin-top:10px;}
+    .odds-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow:auto;margin-top:12px;padding-right:4px;}
+    .odds-item{display:grid;grid-template-columns:1fr 58px 58px 72px;gap:6px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;font-size:11px;font-family:'DM Mono',monospace;}
+    .odds-item span:first-child{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .odds-item span:not(:first-child){text-align:right;color:var(--txt2);}
+    .odds-boost{justify-self:end;display:inline-flex;align-items:center;justify-content:center;min-width:58px;border-radius:999px;padding:5px 8px;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#08170f!important;background:linear-gradient(135deg,#e8c97a,#f5df9d);box-shadow:0 0 18px rgba(232,201,122,.22);}
+    .odds-boost.hot{background:linear-gradient(135deg,#4ade80,#bbf7d0);box-shadow:0 0 22px rgba(74,222,128,.25);}
+    .odds-boost.fire{background:linear-gradient(135deg,#f97316,#fde68a);box-shadow:0 0 24px rgba(249,115,22,.28);}
+    .odds-boost.cold{background:rgba(255,255,255,.1);color:var(--txt2)!important;box-shadow:none;}
 
     /* ADD BUTTON */
     .btn-add{width:100%;background:rgba(201,168,76,.1);border:1px dashed rgba(201,168,76,.3);border-radius:12px;padding:12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);cursor:pointer;margin-top:12px;transition:background .15s;}
@@ -70,8 +85,8 @@
 <div class="wrap">
   <header>
     <div class="eyebrow">MajorBet · Admin</div>
-    <h1>Configurateur<br/><em>des Participants</em></h1>
-    <div class="hsub">Modifie les participants · Sauvegarde dans Firebase</div>
+    <h1>Configurateur<br/><em>MajorBet</em></h1>
+    <div class="hsub">Participants · Points · Sauvegarde Firebase</div>
   </header>
 
   <div class="fb-status">
@@ -84,10 +99,75 @@
     <p style="font-size:12px;color:var(--txt3);font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;">
       Renseigne manuellement le score de la cut line (score relatif au par) une fois
       le cut connu après le Round 2. Les joueurs avec un score <strong>supérieur</strong>
-      à cette valeur seront considérés comme ayant raté le cut (-5 pts).
-      Les autres reçoivent le bonus cut passé (+2 pts).
+      à cette valeur seront considérés comme ayant raté le cut.
+      Le bonus/malus appliqué dépend des règles de points configurées plus bas.
     </p>
     <div id="cutLineList" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏆 Règles de points</div>
+    <div class="rules-grid">
+      <div class="rules-label">1er du classement</div>
+      <input class="field-input rules-input" type="number" data-rule="position.first"/>
+      <div class="rules-label">2e du classement</div>
+      <input class="field-input rules-input" type="number" data-rule="position.second"/>
+      <div class="rules-label">3e du classement</div>
+      <input class="field-input rules-input" type="number" data-rule="position.third"/>
+      <div class="rules-label">Bonus Top 10</div>
+      <input class="field-input rules-input" type="number" data-rule="tiers.top10"/>
+      <div class="rules-label">Bonus Top 20</div>
+      <input class="field-input rules-input" type="number" data-rule="tiers.top20"/>
+      <div class="rules-label">Bonus Top 30</div>
+      <input class="field-input rules-input" type="number" data-rule="tiers.top30"/>
+      <div class="rules-label">Point par coup sous/au-dessus du par</div>
+      <input class="field-input rules-input" type="number" data-rule="scorePerStroke"/>
+      <div class="rules-label">Cut passé</div>
+      <input class="field-input rules-input" type="number" data-rule="cutMade"/>
+      <div class="rules-label">Cut manqué</div>
+      <input class="field-input rules-input" type="number" data-rule="cutMissed"/>
+      <div class="rules-label">Score exact du vainqueur</div>
+      <input class="field-input rules-input" type="number" data-rule="exactWinner"/>
+      <div class="rules-label">Multiplicateur Round 4</div>
+      <input class="field-input rules-input" type="number" min="1" step="0.5" data-rule="round4Multiplier"/>
+      <div class="rules-label">Budget équipe</div>
+      <input class="field-input rules-input" type="number" min="1" data-rule="fantasyBudget"/>
+    </div>
+    <div class="rules-note">
+      Ces règles sont utilisées par l'application et par la fiche récap. Les rounds déjà figés gardent leurs anciens points jusqu'à ce que tu les recalcules.
+    </div>
+    <button class="btn-add" onclick="saveRules()">Sauvegarder les règles de points</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📈 Import des cotes</div>
+    <div class="odds-form">
+      <div class="odds-row">
+        <span class="field-label">Majeur</span>
+        <select class="field-input" id="oddsSport">
+          <option value="golf_masters_tournament_winner">Masters</option>
+          <option value="golf_pga_championship_winner">PGA Championship</option>
+          <option value="golf_us_open_winner">U.S. Open</option>
+          <option value="golf_the_open_championship_winner">The Open</option>
+        </select>
+      </div>
+      <div class="odds-row">
+        <span class="field-label">Région</span>
+        <select class="field-input" id="oddsRegion">
+          <option value="eu">Europe</option>
+          <option value="uk">UK</option>
+          <option value="us">US</option>
+        </select>
+      </div>
+      <div class="odds-row">
+        <span class="field-label">Clé API</span>
+        <input class="field-input" id="oddsApiKey" type="password" placeholder="The Odds API key"/>
+      </div>
+    </div>
+    <button class="btn-add" id="btnImportOdds" onclick="importOdds()">Importer et figer les cotes</button>
+    <button class="btn-add" onclick="loadDemoOdds()">Charger des cotes de test</button>
+    <div class="odds-status" id="oddsStatus">Aucune cote chargée pour le moment.</div>
+    <div class="odds-list" id="oddsList"></div>
   </div>
 
   <div class="section">
@@ -138,8 +218,49 @@ const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
 let participants=[];
+const DEFAULT_RULES={
+  position:{first:25,second:18,third:12},
+  tiers:{top10:8,top20:5,top30:3},
+  scorePerStroke:1,
+  cutMade:2,
+  cutMissed:-5,
+  exactWinner:10,
+  round4Multiplier:2,
+  fantasyBudget:100
+};
+const ODDS_SPORT_LABELS={
+  golf_masters_tournament_winner:'Masters',
+  golf_pga_championship_winner:'PGA Championship',
+  golf_us_open_winner:'U.S. Open',
+  golf_the_open_championship_winner:'The Open'
+};
+const DEMO_PLAYERS=[
+  ['Rory McIlroy',4.8],['Collin Morikawa',7.5],['Ludvig Åberg',10],['Viktor Hovland',13],
+  ['Tommy Fleetwood',18],['Patrick Cantlay',22],['Shane Lowry',28],['Hideki Matsuyama',34],
+  ['Robert MacIntyre',42],['Matt Fitzpatrick',48],['Jason Day',55],['Max Homa',65],
+  ['Justin Rose',80],['Alex Noren',95],['Brian Harman',110],['Min Woo Lee',130],
+  ['Ryan Fox',150],['Russell Henley',180],['Tom Kim',220],['Akshay Bhatia',250],
+  ['Sam Burns',300],['Wyndham Clark',350],['Sungjae Im',400],['Maverick McNealy',500]
+];
 
 function uid(){return Math.random().toString(36).slice(2,9);}
+function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').trim();}
+function cloneRules(){return JSON.parse(JSON.stringify(DEFAULT_RULES));}
+function mergeRules(saved){
+  return {
+    ...cloneRules(),
+    ...(saved||{}),
+    position:{...DEFAULT_RULES.position,...(saved?.position||{})},
+    tiers:{...DEFAULT_RULES.tiers,...(saved?.tiers||{})}
+  };
+}
+function getPath(obj,path){return path.split('.').reduce((acc,k)=>acc?.[k],obj);}
+function setPath(obj,path,value){
+  const keys=path.split('.');
+  let cur=obj;
+  keys.slice(0,-1).forEach(k=>{if(!cur[k])cur[k]={};cur=cur[k];});
+  cur[keys[keys.length-1]]=value;
+}
 
 function toast(msg){
   const t=document.getElementById('toast');
@@ -150,6 +271,201 @@ function toast(msg){
 
 let frozenRounds={};
 let cutLines={};
+let scoringRules=cloneRules();
+let oddsData=null;
+
+function playerCost(odds){
+  if(!odds||odds<=0)return 5;
+  return Math.max(5,Math.min(55,Math.round(100/Math.sqrt(odds))));
+}
+
+function oddsMultiplier(odds){
+  if(!odds||odds<=0)return 1;
+  if(odds<=6)return .45;
+  if(odds<=10)return .6;
+  if(odds<=18)return .8;
+  if(odds<=30)return 1;
+  if(odds<=50)return 1.25;
+  if(odds<=80)return 1.6;
+  if(odds<=125)return 2;
+  if(odds<=200)return 2.5;
+  return 3;
+}
+
+function boostClass(mult){
+  if(mult>=2)return 'fire';
+  if(mult>1)return 'hot';
+  if(mult<1)return 'cold';
+  return '';
+}
+
+function median(values){
+  const nums=values.filter(n=>Number.isFinite(n)).sort((a,b)=>a-b);
+  if(!nums.length)return null;
+  const mid=Math.floor(nums.length/2);
+  return nums.length%2?nums[mid]:(nums[mid-1]+nums[mid])/2;
+}
+
+async function loadRules(){
+  try{
+    const snap=await getDoc(doc(db,'config','scoringRules'));
+    scoringRules=mergeRules(snap.exists()?snap.data():null);
+    renderRules();
+  }catch(e){
+    console.error('Erreur chargement scoringRules:',e);
+    scoringRules=cloneRules();
+    renderRules();
+  }
+}
+
+function renderRules(){
+  document.querySelectorAll('[data-rule]').forEach(input=>{
+    input.value=getPath(scoringRules,input.dataset.rule);
+    input.oninput=()=>{
+      const raw=input.value;
+      const n=Number(raw);
+      if(raw!==''&&!Number.isNaN(n))setPath(scoringRules,input.dataset.rule,n);
+    };
+  });
+}
+
+window.saveRules=async function(){
+  try{
+    for(const input of document.querySelectorAll('[data-rule]')){
+      const n=Number(input.value);
+      if(input.value===''||Number.isNaN(n)){
+        toast('⚠️ Toutes les règles de points doivent être remplies');
+        return;
+      }
+      setPath(scoringRules,input.dataset.rule,n);
+    }
+    await setDoc(doc(db,'config','scoringRules'),scoringRules);
+    toast('✅ Règles de points sauvegardées !');
+  }catch(e){
+    toast('❌ Erreur : '+e.message);
+  }
+};
+
+async function loadOdds(){
+  try{
+    const snap=await getDoc(doc(db,'config','odds'));
+    oddsData=snap.exists()?snap.data():null;
+    renderOdds();
+  }catch(e){
+    console.error('Erreur chargement odds:',e);
+    renderOdds();
+  }
+}
+
+function renderOdds(){
+  const status=document.getElementById('oddsStatus');
+  const list=document.getElementById('oddsList');
+  const players=oddsData?.players||[];
+  if(!players.length){
+    status.textContent='Aucune cote chargée pour le moment.';
+    list.innerHTML='';
+    return;
+  }
+  const d=oddsData.importedAt?new Date(oddsData.importedAt).toLocaleString('fr-FR'):'date inconnue';
+  status.textContent=`${players.length} joueurs importés · ${oddsData.sportLabel||'Majeur'} · ${d}`;
+  list.innerHTML=players.slice(0,80).map(p=>`
+    <div class="odds-item">
+      <span>${p.name}</span>
+      <span>${p.odds.toFixed(2)}</span>
+      <span>${p.cost} pts</span>
+      <span class="odds-boost ${boostClass(p.multiplier)}">×${p.multiplier}</span>
+    </div>`).join('');
+}
+
+window.importOdds=async function(){
+  const apiKey=document.getElementById('oddsApiKey').value.trim();
+  const sportKey=document.getElementById('oddsSport').value;
+  const region=document.getElementById('oddsRegion').value;
+  const btn=document.getElementById('btnImportOdds');
+  if(!apiKey){
+    toast('⚠️ Colle ta clé The Odds API');
+    return;
+  }
+  btn.disabled=true;
+  btn.textContent='⏳ Import en cours...';
+  try{
+    const url=`https://api.the-odds-api.com/v4/sports/${sportKey}/odds/?apiKey=${encodeURIComponent(apiKey)}&regions=${region}&markets=outrights&oddsFormat=decimal`;
+    const res=await fetch(url);
+    if(!res.ok){
+      const txt=await res.text();
+      throw new Error(txt||`Erreur API ${res.status}`);
+    }
+    const events=await res.json();
+    const byName=new Map();
+    for(const event of events){
+      for(const book of event.bookmakers||[]){
+        for(const market of book.markets||[]){
+          if(market.key!=='outrights')continue;
+          for(const out of market.outcomes||[]){
+            const name=out.name||out.description;
+            const price=Number(out.price);
+            if(!name||!Number.isFinite(price))continue;
+            const key=norm(name);
+            if(!byName.has(key))byName.set(key,{name,prices:[],books:new Set()});
+            const row=byName.get(key);
+            row.prices.push(price);
+            row.books.add(book.title||book.key||'book');
+          }
+        }
+      }
+    }
+    const players=[...byName.values()].map(row=>{
+      const odds=median(row.prices);
+      return {
+        name:row.name,
+        normName:norm(row.name),
+        odds:Number(odds.toFixed(2)),
+        cost:playerCost(odds),
+        multiplier:oddsMultiplier(odds),
+        books:row.books.size
+      };
+    }).filter(p=>p.odds).sort((a,b)=>a.odds-b.odds||a.name.localeCompare(b.name));
+    if(!players.length)throw new Error('Aucune cote outright trouvée pour ce tournoi.');
+    oddsData={
+      sportKey,
+      sportLabel:ODDS_SPORT_LABELS[sportKey]||sportKey,
+      region,
+      importedAt:new Date().toISOString(),
+      players
+    };
+    await setDoc(doc(db,'config','odds'),oddsData);
+    renderOdds();
+    toast(`✅ ${players.length} cotes importées et figées`);
+  }catch(e){
+    toast('❌ Import impossible : '+e.message.slice(0,140));
+  }
+  btn.disabled=false;
+  btn.textContent='Importer et figer les cotes';
+};
+
+window.loadDemoOdds=async function(){
+  try{
+    oddsData={
+      sportKey:'demo_major',
+      sportLabel:'Majeur de test',
+      region:'demo',
+      importedAt:new Date().toISOString(),
+      players:DEMO_PLAYERS.map(([name,odds])=>({
+        name,
+        normName:norm(name),
+        odds,
+        cost:playerCost(odds),
+        multiplier:oddsMultiplier(odds),
+        books:3
+      })).sort((a,b)=>a.odds-b.odds)
+    };
+    await setDoc(doc(db,'config','odds'),oddsData);
+    renderOdds();
+    toast('✅ Cotes de test chargées');
+  }catch(e){
+    toast('❌ Erreur test : '+e.message);
+  }
+};
 
 // Charge les cut lines existantes et affiche le formulaire pour chaque tournoi connu
 async function loadCutLines(){
@@ -374,6 +690,8 @@ window.resetScores=async function(){
 loadParts();
 loadFrozenRounds();
 loadCutLines();
+loadRules();
+loadOdds();
 </script>
 </body>
 </html>
