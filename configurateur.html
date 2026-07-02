@@ -174,6 +174,7 @@
     <div class="section-title">👥 Participants</div>
     <div class="part-list" id="partList"></div>
     <button class="btn-add" onclick="addPart()">+ Ajouter un participant</button>
+    <button class="btn-add" onclick="clearParticipants()">Supprimer tous les participants</button>
   </div>
 
   <button class="btn-save" id="btnSave" onclick="saveAll()">
@@ -226,7 +227,7 @@ const DEFAULT_RULES={
   cutMissed:-5,
   exactWinner:10,
   round4Multiplier:2,
-  fantasyBudget:100
+  fantasyBudget:95
 };
 const ODDS_SPORT_LABELS={
   golf_masters_tournament_winner:'Masters',
@@ -281,15 +282,16 @@ function playerCost(odds){
 
 function oddsMultiplier(odds){
   if(!odds||odds<=0)return 1;
-  if(odds<=6)return .45;
-  if(odds<=10)return .6;
-  if(odds<=18)return .8;
-  if(odds<=30)return 1;
-  if(odds<=50)return 1.25;
-  if(odds<=80)return 1.6;
-  if(odds<=125)return 2;
-  if(odds<=200)return 2.5;
-  return 3;
+  if(odds<=5)return .35;
+  if(odds<=8)return .5;
+  if(odds<=12)return .65;
+  if(odds<=20)return .85;
+  if(odds<=35)return 1.05;
+  if(odds<=60)return 1.45;
+  if(odds<=100)return 1.85;
+  if(odds<=160)return 2.35;
+  if(odds<=250)return 2.8;
+  return 3.2;
 }
 
 function boostClass(mult){
@@ -642,16 +644,37 @@ window.updateGolfer=function(id,idx,value){
   const p=participants.find(x=>x.id===id);
   if(p)p.golfers[idx]=value;
 };
-window.removePart=function(id){
+async function persistParticipants(message='✅ Participants sauvegardés !'){
+  await setDoc(doc(db,'config','participants'),{list:participants});
+  toast(message);
+}
+
+window.removePart=async function(id){
   if(!confirm('Supprimer ce participant ?'))return;
-  participants=participants.filter(p=>p.id!==id);
-  render();
+  try{
+    participants=participants.filter(p=>p.id!==id);
+    render();
+    await persistParticipants('✅ Participant supprimé');
+  }catch(e){
+    toast('❌ Erreur suppression : '+e.message);
+  }
 };
 window.addPart=function(){
   participants.push({id:uid(),name:'',golfers:['','','',''],guess:0});
   render();
   // Scroll vers le bas
   window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+};
+
+window.clearParticipants=async function(){
+  if(!confirm('Supprimer TOUS les participants ? Cette action vide le classement de l’application.'))return;
+  try{
+    participants=[];
+    render();
+    await persistParticipants('✅ Tous les participants ont été supprimés');
+  }catch(e){
+    toast('❌ Erreur suppression : '+e.message);
+  }
 };
 
 window.saveAll=async function(){
@@ -668,8 +691,7 @@ window.saveAll=async function(){
         return;
       }
     }
-    await setDoc(doc(db,'config','participants'),{list:participants});
-    toast('✅ Participants sauvegardés !');
+    await persistParticipants();
   }catch(e){
     toast('❌ Erreur : '+e.message);
   }

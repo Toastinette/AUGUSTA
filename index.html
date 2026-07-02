@@ -249,7 +249,9 @@ const db=getFirestore(app);
 //  CONSTANTES
 // ══════════════════════════════════════════════════════
 const MAJOR_NAMES=['masters','pga championship','u.s. open','us open','the open championship','open championship'];
-const IS_TEST_MODE=new URLSearchParams(location.search).has('test');
+const SEARCH_PARAMS=new URLSearchParams(location.search);
+const IS_TEST_MODE=SEARCH_PARAMS.has('test');
+const USE_REAL_PARTICIPANTS_IN_TEST=IS_TEST_MODE&&SEARCH_PARAMS.has('real');
 const DEMO_PLAYERS=[
   ['Rory McIlroy',4.8],['Collin Morikawa',7.5],['Ludvig Åberg',10],['Viktor Hovland',13],
   ['Tommy Fleetwood',18],['Patrick Cantlay',22],['Shane Lowry',28],['Hideki Matsuyama',34],
@@ -266,20 +268,21 @@ const DEFAULT_RULES={
   cutMissed:-5,
   exactWinner:10,
   round4Multiplier:2,
-  fantasyBudget:100
+  fantasyBudget:95
 };
 
 function cloneRules(){return JSON.parse(JSON.stringify(DEFAULT_RULES));}
 function demoParticipants(){
   return [
     {id:'morgan-demo',name:'Morgan',golfers:['Shane Lowry','Ludvig Åberg','Tommy Fleetwood','Jason Day'],guess:0,budgetUsed:88},
-    {id:'baptiste-demo',name:'Baptiste',golfers:['Rory McIlroy','Collin Morikawa','Viktor Hovland','Max Homa'],guess:-8,budgetUsed:96},
-    {id:'chris-demo',name:'Chris',golfers:['Robert MacIntyre','Matt Fitzpatrick','Brian Harman','Ryan Fox'],guess:-5,budgetUsed:64}
+    {id:'baptiste-demo',name:'Baptiste',golfers:['Rory McIlroy','Viktor Hovland','Max Homa','Ryan Fox'],guess:-8,budgetUsed:94},
+    {id:'chris-demo',name:'Chris',golfers:['Robert MacIntyre','Matt Fitzpatrick','Brian Harman','Justin Rose'],guess:-5,budgetUsed:50}
   ];
 }
 function normalizeParticipants(list){
   const clean=Array.isArray(list)?list:[];
-  return IS_TEST_MODE&&!clean.length?demoParticipants():clean;
+  if(IS_TEST_MODE&&!USE_REAL_PARTICIPANTS_IN_TEST)return demoParticipants();
+  return clean;
 }
 function mergeRules(saved){
   return {
@@ -312,15 +315,16 @@ function playerCost(odds){
 }
 function oddsMultiplier(odds){
   if(!odds||odds<=0)return 1;
-  if(odds<=6)return .45;
-  if(odds<=10)return .6;
-  if(odds<=18)return .8;
-  if(odds<=30)return 1;
-  if(odds<=50)return 1.25;
-  if(odds<=80)return 1.6;
-  if(odds<=125)return 2;
-  if(odds<=200)return 2.5;
-  return 3;
+  if(odds<=5)return .35;
+  if(odds<=8)return .5;
+  if(odds<=12)return .65;
+  if(odds<=20)return .85;
+  if(odds<=35)return 1.05;
+  if(odds<=60)return 1.45;
+  if(odds<=100)return 1.85;
+  if(odds<=160)return 2.35;
+  if(odds<=250)return 2.8;
+  return 3.2;
 }
 function boostClass(mult){
   if(mult>=2)return 'fire';
@@ -373,7 +377,7 @@ function setOddsData(data){
     ...p,
     normName:p.normName||norm(p.name),
     cost:p.cost??playerCost(p.odds),
-    multiplier:p.multiplier??oddsMultiplier(p.odds)
+    multiplier:oddsMultiplier(p.odds)
   }));
   gOddsByNorm=Object.fromEntries(gOddsPlayers.map(p=>[p.normName,p]));
   renderEntryForm();
@@ -408,7 +412,7 @@ async function loadFromFirebase(){
       gParticipants=normalizeParticipants(partDoc.data().list);
     }else{
       // Participants par défaut si Firebase vide
-      gParticipants=IS_TEST_MODE?demoParticipants():[
+      gParticipants=(IS_TEST_MODE&&!USE_REAL_PARTICIPANTS_IN_TEST)?demoParticipants():[
         {id:'morgan',  name:'Morgan',  golfers:['Justin Rose','Shane Lowry','Tommy Fleetwood','Jason Day'], guess:-11},
         {id:'baptiste',name:'Baptiste',golfers:['Rory McIlroy','Tommy Fleetwood','Ludvig Åberg','Max Homa'], guess:-12},
         {id:'chris',   name:'Chris',   golfers:['Matt Fitzpatrick','Rory McIlroy','Ludvig Åberg','Xander Schauffele'], guess:-17}
@@ -416,9 +420,13 @@ async function loadFromFirebase(){
     }
 
     // Scores figés
-    const frozenDoc=await getDoc(doc(db,'config','frozenRounds'));
-    if(frozenDoc.exists()){
-      gFrozenRounds=frozenDoc.data()||{};
+    if(IS_TEST_MODE){
+      gFrozenRounds={};
+    }else{
+      const frozenDoc=await getDoc(doc(db,'config','frozenRounds'));
+      if(frozenDoc.exists()){
+        gFrozenRounds=frozenDoc.data()||{};
+      }
     }
 
     // Cut lines (saisies manuellement dans le configurateur)
@@ -471,6 +479,11 @@ function listenFirebase(){
     }
   });
   onSnapshot(doc(db,'config','frozenRounds'),(snap)=>{
+    if(IS_TEST_MODE){
+      gFrozenRounds={};
+      if(gParsed)renderPodium(gParsed);
+      return;
+    }
     if(snap.exists()){
       gFrozenRounds=snap.data()||{};
       if(gParsed)renderPodium(gParsed);
@@ -752,7 +765,7 @@ function demoEvent(){
     [0,-3,-1,-2],[-2,1,-2,-1],[1,-2,0,-3],[-1,0,-2,-1],
     [2,-1,-1,-2],[0,1,-2,-1],[-2,2,1,-1],[1,-1,0,0],
     [3,0,-2,1],[2,1,0,-1],[4,0,1,-2],[1,3,0,0],
-    [5,2,0,-1],[3,4,1,0],[6,2,0,1],[4,3,2,0],
+    [-3,-4,-2,-3],[3,4,1,0],[6,2,0,1],[4,3,2,0],
     [7,1,2,1],[5,4,2,2],[8,3,1,2],[6,5,3,1]
   ];
   const competitors=DEMO_PLAYERS.map(([name],i)=>{
