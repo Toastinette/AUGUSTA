@@ -1,7 +1,7 @@
 // Le numéro de version change à chaque mise à jour du code pour forcer
 // tous les navigateurs à télécharger la nouvelle version (network-first
 // pour index.html), au lieu de servir une copie en cache obsolète.
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = 'majorbet-' + CACHE_VERSION;
 const BASE = '/AUGUSTA';
 const STATIC_ASSETS = [
@@ -28,6 +28,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = e.request.url;
+  const reqUrl = new URL(url);
 
   // Firebase, ESPN, Google : toujours réseau, jamais de cache
   if (url.includes('firestore') ||
@@ -41,7 +42,7 @@ self.addEventListener('fetch', e => {
   // index.html (et la racine) : NETWORK-FIRST.
   // On veut toujours la dernière version du code en priorité.
   // Le cache ne sert que de secours si le réseau est indisponible.
-  if (url.endsWith('/AUGUSTA/') || url.endsWith('/AUGUSTA/index.html') || url.endsWith('/')) {
+  if (reqUrl.pathname.endsWith('/') || reqUrl.pathname.endsWith('/index.html')) {
     e.respondWith(
       fetch(e.request)
         .then(resp => {

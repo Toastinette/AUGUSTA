@@ -84,21 +84,22 @@
     .detail{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
     .pcard.open .detail{max-height:900px;}
     .din{border-top:1px solid rgba(255,255,255,.07);padding:14px 18px 18px;}
-    .dhead{display:grid;grid-template-columns:1fr 54px 46px 64px;gap:6px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
+    .dhead{display:grid;grid-template-columns:1fr 52px 82px;gap:8px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.18);}
     .dhead span{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-family:'DM Mono',monospace;}
     .dhead span:nth-child(n+2){text-align:center;}.dhead span:last-child{text-align:right;}
-    .drow{display:grid;grid-template-columns:1fr 54px 46px 64px;gap:7px;align-items:center;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+    .drow{display:grid;grid-template-columns:minmax(0,1fr) 52px 82px;gap:8px;align-items:center;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.06);}
     .drow:last-child{border-bottom:none;}
     .dn{font-size:14px;font-weight:700;color:var(--txt1);min-width:0;}
-    .dp{font-family:'DM Mono',monospace;font-size:11px;text-align:center;padding:3px 5px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--cream2);}
+    .dp{display:inline-flex;align-items:center;justify-content:center;width:max-content;min-width:48px;font-family:'DM Mono',monospace;font-size:13px;text-align:center;padding:5px 10px;border-radius:9px;background:rgba(255,255,255,.07);color:var(--cream2);}
     .dp.cut{background:rgba(239,68,68,.18);color:#fca5a5;}
     .dp.top3{background:rgba(201,168,76,.22);color:var(--gold2);}
     .dp.nf{background:rgba(100,116,139,.15);color:#94a3b8;}
     .ds{font-family:'DM Mono',monospace;font-size:12px;text-align:center;}
     .ds.under{color:#4ade80;}.ds.over{color:#f87171;}.ds.even{color:var(--cream2);}
-    .dpt{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;text-align:right;color:var(--gold);}
+    .dpt{font-family:'DM Mono',monospace;font-size:24px;font-weight:700;text-align:right;color:var(--gold);line-height:1;background:transparent;border:none;cursor:pointer;padding:8px 0 8px 8px;width:100%;}
+    .dpt:hover{color:var(--gold2);}
     .dpt.neg{color:#f87171;}.dpt.zero{color:var(--txt3);}
-    .dpt-detail{font-size:10px;color:var(--txt3);font-family:'DM Mono',monospace;text-align:right;margin-top:2px;}
+    .dpt-detail{display:none;}
     .bonus-row{margin-top:10px;padding:9px 12px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:10px;display:flex;justify-content:space-between;align-items:center;}
     .bonus-row span:first-child{font-size:12px;color:#86efac;font-family:'DM Mono',monospace;}
     .bonus-row span:last-child{font-size:13px;font-weight:600;color:#4ade80;font-family:'DM Mono',monospace;}
@@ -145,7 +146,15 @@
     .odds-tag .boost-badge{min-width:auto;padding:2px 6px;margin-left:4px;font-size:11px;vertical-align:middle;}
     .player-name-cell{display:flex;align-items:center;gap:12px;min-width:0;cursor:pointer;}
     .player-name-text{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:17px;line-height:1.05;}
+    .player-text-stack{min-width:0;display:flex;flex-direction:column;gap:7px;}
+    .player-rank-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .player-rank-line .odds-tag{margin:0;}
     .drow:hover .photo-frame.mini{border-color:rgba(201,168,76,.35);}
+    .points-breakdown-list{display:grid;gap:8px;margin-top:6px;}
+    .points-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.06);padding:9px 0;font-family:'DM Mono',monospace;font-size:12px;}
+    .points-line span:first-child{color:var(--txt2);}
+    .points-line span:last-child{color:var(--txt1);font-weight:500;text-align:right;}
+    .points-line.total span:last-child{color:var(--gold2);font-size:16px;}
     .scorecard-head{display:flex;gap:12px;align-items:center;margin-bottom:16px;}
     .scorecard-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--txt1);line-height:1.05;}
     .scorecard-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--txt3);margin-top:4px;}
@@ -155,10 +164,12 @@
     @media(max-width:390px){
       .wrap{padding:0 12px;}
       .din{padding:13px 14px 16px;}
-      .dhead,.drow{grid-template-columns:1fr 48px 42px 58px;gap:5px;}
+      .dhead,.drow{grid-template-columns:minmax(0,1fr) 42px 70px;gap:5px;}
       .photo-frame.mini{width:78px;height:92px;}
       .player-name-cell{gap:9px;}
       .player-name-text{font-size:15px;}
+      .dp{min-width:40px;font-size:11px;padding:4px 7px;}
+      .dpt{font-size:21px;}
       .odds-tag{margin-left:87px;font-size:10px;}
       .pick-row{grid-template-columns:76px 1fr;gap:10px;}
       .photo-frame.pick{width:76px;height:88px;}
@@ -531,6 +542,21 @@ function photoHTML(name,kind='mini',id=''){
 function playerNameHTML(name,clickName=''){
   const click=clickName?` onclick="event.stopPropagation();window.openPlayerCard('${jsStr(clickName)}')"`:'';
   return `<span class="player-name-cell"${click}>${photoHTML(name,'mini')}<span class="player-name-text">${esc(name)}</span></span>`;
+}
+function playerBlockHTML(name,clickName,posLbl,posCls,oddsTag){
+  const click=clickName?` onclick="event.stopPropagation();window.openPlayerCard('${jsStr(clickName)}')"`:'';
+  return `<span class="player-name-cell"${click}>
+    ${photoHTML(name,'mini')}
+    <span class="player-text-stack">
+      <span class="player-name-text">${esc(name)}</span>
+      <span class="player-rank-line"><span class="dp ${posCls||''}">${esc(posLbl||'—')}</span>${oddsTag||''}</span>
+    </span>
+  </span>`;
+}
+function pointButtonHTML(value,cls,detail){
+  const sign=value>=0?'+':'';
+  const payload=encodeURIComponent(JSON.stringify(detail||{})).replace(/'/g,'%27');
+  return `<button type="button" class="dpt ${cls||''}" data-points="${payload}">${sign}${value}</button>`;
 }
 
 function selectedTeam(){
@@ -1072,7 +1098,7 @@ function renderPodium(parsed){
       const{name,ep}=d;
       const oddsInfo=ep?getOddsInfo(ep.displayName)||getOddsInfo(name):getOddsInfo(name);
       const oddsTag=oddsTagHTML(oddsInfo);
-      if(!ep||d.nf)return`<div class="drow"><span class="dn">${playerNameHTML(name)}${oddsTag}</span><span class="dp nf">?</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
+      if(!ep||d.nf)return`<div class="drow"><span class="dn">${playerBlockHTML(name,'','?','nf',oddsTag)}</span><span class="ds">—</span><button class="dpt zero" type="button">—</button></div>`;
 
       if(d.isTotal){
         const s=fmtStp(ep.stpTotal);
@@ -1080,40 +1106,44 @@ function renderPodium(parsed){
         const posLbl=ep.madeCut===false?'CUT':ep.rank?(sameRank>1?`T${ep.rank}`:`${ep.rank}`+(ep.rank===1?'er':'e')):'—';
         const posCls=ep.madeCut===false?'cut':ep.rank&&ep.rank<=3?'top3':'';
         const ptsCls=d.sumPts<0?'neg':d.sumPts===0?'zero':'';
-        const sign=d.sumPts>=0?'+':'';
-        const breakdown=d.byRound.map(b=>`J${b.r}:${b.pts>=0?'+':''}${b.pts}${b.oddsMult&&b.oddsMult!==1?'×'+b.oddsMult:''}${multLabel(b.mult)}${b.frozen?'🔒':''}`).join(' ');
-        const cutStr=d.cutBonus!==0?(d.cutBonus>0?` cut:+${d.cutBonus}`:`cut:${d.cutBonus}`):'';
+        const roundsDetail=d.byRound.map(b=>({
+          label:`Jour ${b.r}${b.frozen?' figé':''}`,
+          value:`${b.pts>=0?'+':''}${b.pts}${b.oddsMult&&b.oddsMult!==1?' · cote ×'+b.oddsMult:''}${b.mult&&b.mult!==1?' · round ×'+b.mult:''}`
+        }));
+        if(d.cutBonus!==0)roundsDetail.push({label:'Cut',value:`${d.cutBonus>0?'+':''}${d.cutBonus}`});
+        const detail={title:`${name} · détail des points`,subtitle:`${posLbl} · score ${s.t}`,lines:roundsDetail,total:`${d.sumPts>=0?'+':''}${d.sumPts}`};
         return`<div class="drow">
-          <span class="dn">${playerNameHTML(name,ep.displayName)}${oddsTag}</span>
-          <span class="dp ${posCls}">${posLbl}</span>
+          <span class="dn">${playerBlockHTML(name,ep.displayName,posLbl,posCls,oddsTag)}</span>
           <span class="ds ${s.c}">${s.t}</span>
-          <div style="text-align:right">
-            <div class="dpt ${ptsCls}">${sign}${d.sumPts}</div>
-            ${breakdown?`<div class="dpt-detail">${breakdown}${cutStr}</div>`:''}
-          </div>
+          <div style="text-align:right">${pointButtonHTML(d.sumPts,ptsCls,detail)}</div>
         </div>`;
       }else{
-        if(d.noData)return`<div class="drow"><span class="dn">${playerNameHTML(name,ep?.displayName||'')}</span><span class="dp nf">—</span><span class="ds">—</span><span class="dpt zero">—</span></div>`;
+        if(d.noData)return`<div class="drow"><span class="dn">${playerBlockHTML(name,ep?.displayName||'','—','nf',oddsTag)}</span><span class="ds">—</span><button class="dpt zero" type="button">—</button></div>`;
         const s=fmtStp(d.score);
         const sameRankR=d.rank?players.filter(pl=>pl.rank===d.rank).length:0;
         const posLbl=d.rank?(sameRankR>1?`T${d.rank}`:`${d.rank}`+(d.rank===1?'er':'e')):'—';
         const posCls=d.rank&&d.rank<=3?'top3':'';
         const ptsCls=d.pts<0?'neg':d.pts===0?'zero':'';
-        const sign=d.pts>=0?'+':'';
-        const x2=d.mult!==1?`<span class="x2b">${multLabel(d.mult)}</span>`:'';
-        const frozIcon=d.frozen?'<span class="frozen-badge">🔒</span>':'';
         const rankPtsDisp=d.rankPts!==undefined?d.rankPts:null;
         const scorePtsDisp=d.scorePts!==undefined?d.scorePts:null;
-        const detailSub=(rankPtsDisp!==null&&scorePtsDisp!==null)
-          ?`rang:+${rankPtsDisp} score:${scorePtsDisp>=0?'+':''}${scorePtsDisp}${d.oddsMult&&d.oddsMult!==1?' cote:×'+d.oddsMult:''}`:'';
+        const base=(rankPtsDisp??0)+(scorePtsDisp??0);
+        const detail={
+          title:`${name} · Jour ${roundNum}`,
+          subtitle:`${posLbl} · score du jour ${s.t}${d.frozen?' · figé':''}`,
+          lines:[
+            {label:'Classement',value:rankPtsDisp!==null?`+${rankPtsDisp}`:'—'},
+            {label:'Score du jour',value:scorePtsDisp!==null?`${scorePtsDisp>=0?'+':''}${scorePtsDisp}`:'—'},
+            {label:'Base',value:`${base>=0?'+':''}${base}`},
+            {label:'Cote joueur',value:`×${d.oddsMult||1}`},
+            ...(d.mult!==1?[{label:'Multiplicateur round',value:`×${d.mult}`}]:[]),
+            ...(d.frozen?[{label:'Statut',value:'Round figé'}]:[])
+          ],
+          total:`${d.pts>=0?'+':''}${d.pts}`
+        };
         return`<div class="drow">
-          <span class="dn">${playerNameHTML(name,ep.displayName)}${oddsTag}</span>
-          <span class="dp ${posCls}">${posLbl}</span>
+          <span class="dn">${playerBlockHTML(name,ep.displayName,posLbl,posCls,oddsTag)}</span>
           <span class="ds ${s.c}">${s.t}</span>
-          <div style="text-align:right">
-            <div class="dpt ${ptsCls}">${sign}${d.pts}${x2}${frozIcon}</div>
-            ${detailSub?`<div class="dpt-detail">${detailSub}</div>`:''}
-          </div>
+          <div style="text-align:right">${pointButtonHTML(d.pts,ptsCls,detail)}</div>
         </div>`;
       }
     }).join('');
@@ -1142,8 +1172,8 @@ function renderPodium(parsed){
 </div>
 <div class="detail"><div class="din">
   <div class="dhead">
-    <span>Joueur</span><span>Rang</span>
-    <span>${isTotal?'Cumulé':'Score J.'}</span>
+    <span>Joueur</span>
+    <span>${isTotal?'Score':'Score J.'}</span>
     <span style="text-align:right">Pts</span>
   </div>
   ${rows}${extraHTML}
@@ -1207,6 +1237,40 @@ window.openPlayerCard=function(name){
 };
 window.closePlayerCard=function(){document.getElementById('playerOverlay')?.classList.remove('open');};
 window.closePlayerCardIfOutside=function(e){if(e.target===document.getElementById('playerOverlay'))window.closePlayerCard();};
+
+function openPointsDetail(raw){
+  let detail={};
+  try{detail=JSON.parse(raw||'{}');}catch(e){detail={};}
+  const overlay=document.getElementById('pointsOverlay');
+  const body=document.getElementById('pointsBody');
+  if(!overlay||!body)return;
+  const lines=(detail.lines||[]).map(line=>`
+    <div class="points-line">
+      <span>${esc(line.label)}</span>
+      <span>${esc(line.value)}</span>
+    </div>`).join('');
+  body.innerHTML=`
+    <div class="scorecard-name">${esc(detail.title||'Détail des points')}</div>
+    ${detail.subtitle?`<div class="scorecard-sub">${esc(detail.subtitle)}</div>`:''}
+    <div class="points-breakdown-list">
+      ${lines||'<div class="entry-meta">Aucun détail disponible.</div>'}
+      <div class="points-line total">
+        <span>Total</span>
+        <span>${esc(detail.total||'—')}</span>
+      </div>
+    </div>`;
+  overlay.classList.add('open');
+}
+window.openPointsDetail=openPointsDetail;
+window.closePointsDetail=function(){document.getElementById('pointsOverlay')?.classList.remove('open');};
+window.closePointsDetailIfOutside=function(e){if(e.target===document.getElementById('pointsOverlay'))window.closePointsDetail();};
+
+document.addEventListener('click',e=>{
+  const btn=e.target.closest?.('.dpt[data-points]');
+  if(!btn)return;
+  e.stopPropagation();
+  openPointsDetail(decodeURIComponent(btn.dataset.points||''));
+});
 
 function renderRulesModal(){
   const rankRows=document.getElementById('rulesRankRows');
@@ -1359,6 +1423,16 @@ init();
       <button class="modal-close" onclick="window.closePlayerCard()">✕</button>
     </div>
     <div id="playerCardBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pointsOverlay" onclick="window.closePointsDetailIfOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Détail des points</div>
+      <button class="modal-close" onclick="window.closePointsDetail()">✕</button>
+    </div>
+    <div id="pointsBody"></div>
   </div>
 </div>
 
