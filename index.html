@@ -746,8 +746,13 @@ window.saveEntryTeam=async function(){
     setBanner(`Budget dépassé : ${cost}/${budget} pts. Remplace un favori par un joueur moins cher.`,'berr');
     return;
   }
+  const id=norm(name).replace(/\s+/g,'-')||Math.random().toString(36).slice(2,9);
+  const existingTeam=gParticipants.find(p=>p.id===id||norm(p.name)===norm(name));
+  if(existingTeam&&!confirm(`Une équipe existe déjà pour ${existingTeam.name||name}. La remplacer par cette nouvelle sélection ?`)){
+    setBanner('Création annulée : l’équipe existante a été conservée.','binfo');
+    return;
+  }
   try{
-    const id=norm(name).replace(/\s+/g,'-')||Math.random().toString(36).slice(2,9);
     const oddsMeta=golfers.map(g=>getOddsInfo(g));
     const existing=gParticipants.filter(p=>p.id!==id&&norm(p.name)!==norm(name));
     const next=[...existing,{id,name,golfers,guess:0,budgetUsed:cost,oddsMeta,createdAt:new Date().toISOString()}];

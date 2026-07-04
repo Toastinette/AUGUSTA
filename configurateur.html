@@ -58,6 +58,18 @@
     .odds-boost.hot{background:linear-gradient(135deg,#4ade80,#bbf7d0);box-shadow:0 0 22px rgba(74,222,128,.25);}
     .odds-boost.fire{background:linear-gradient(135deg,#f97316,#fde68a);box-shadow:0 0 24px rgba(249,115,22,.28);}
     .odds-boost.cold{background:rgba(255,255,255,.1);color:var(--txt2)!important;box-shadow:none;}
+    .audit-status{font-size:11px;color:var(--txt3);font-family:'DM Mono',monospace;line-height:1.6;margin-bottom:12px;}
+    .audit-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+    .audit-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--txt2);}
+    .audit-card strong{display:block;font-family:'DM Sans',sans-serif;font-size:22px;color:var(--txt1);line-height:1.1;margin-bottom:4px;}
+    .audit-card.ok{border-color:rgba(74,222,128,.28);}
+    .audit-card.warn{border-color:rgba(248,113,113,.35);background:rgba(239,68,68,.06);}
+    .audit-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto;padding-right:4px;}
+    .audit-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;font-size:12px;}
+    .audit-row strong{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .audit-row span{font-family:'DM Mono',monospace;color:var(--txt3);font-size:11px;text-align:right;}
+    .audit-row.missing span{color:#fca5a5;}
+    @media(max-width:520px){.audit-summary{grid-template-columns:1fr;}.audit-row{grid-template-columns:1fr;}.audit-row span{text-align:left;}}
 
     /* ADD BUTTON */
     .btn-add{width:100%;background:rgba(201,168,76,.1);border:1px dashed rgba(201,168,76,.3);border-radius:12px;padding:12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);cursor:pointer;margin-top:12px;transition:background .15s;}
@@ -171,6 +183,13 @@
   </div>
 
   <div class="section">
+    <div class="section-title">🧾 Audit cotes / photos</div>
+    <div class="audit-status" id="auditStatus">Importe des cotes pour lancer l'audit.</div>
+    <div class="audit-summary" id="auditSummary"></div>
+    <div class="audit-list" id="auditList"></div>
+  </div>
+
+  <div class="section">
     <div class="section-title">👥 Participants</div>
     <div class="part-list" id="partList"></div>
     <button class="btn-add" onclick="addPart()">+ Ajouter un participant</button>
@@ -246,6 +265,10 @@ const DEMO_PLAYERS=[
 
 function uid(){return Math.random().toString(36).slice(2,9);}
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').trim();}
+function photoSlug(name){return norm(name).replace(/\s+/g,'-');}
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function cloneRules(){return JSON.parse(JSON.stringify(DEFAULT_RULES));}
 function mergeRules(saved){
   return {
@@ -366,6 +389,7 @@ function renderOdds(){
   if(!players.length){
     status.textContent='Aucune cote chargée pour le moment.';
     list.innerHTML='';
+    auditOddsPhotos();
     return;
   }
   const d=oddsData.importedAt?new Date(oddsData.importedAt).toLocaleString('fr-FR'):'date inconnue';
@@ -377,6 +401,58 @@ function renderOdds(){
       <span>${p.cost} pts</span>
       <span class="odds-boost ${boostClass(p.multiplier)}">×${p.multiplier}</span>
     </div>`).join('');
+  auditOddsPhotos();
+}
+
+async function loadHeadshotIndex(){
+  const res=await fetch('assets/headshots/_index.txt',{cache:'no-store'});
+  if(!res.ok)throw new Error(`Index photos introuvable (${res.status})`);
+  const files=(await res.text()).split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  return new Set(files.map(file=>file.split('/').pop()));
+}
+
+async function auditOddsPhotos(){
+  const status=document.getElementById('auditStatus');
+  const summary=document.getElementById('auditSummary');
+  const list=document.getElementById('auditList');
+  if(!status||!summary||!list)return;
+  const players=oddsData?.players||[];
+  if(!players.length){
+    status.textContent='Importe des cotes pour lancer l’audit.';
+    summary.innerHTML='';
+    list.innerHTML='';
+    return;
+  }
+  status.textContent='Audit en cours...';
+  summary.innerHTML='';
+  list.innerHTML='';
+  try{
+    const headshots=await loadHeadshotIndex();
+    const rows=players.map(p=>{
+      const file=`${photoSlug(p.name)}.png`;
+      return {...p,file,hasPhoto:headshots.has(file)};
+    });
+    const missing=rows.filter(p=>!p.hasPhoto);
+    const found=rows.length-missing.length;
+    summary.innerHTML=`
+      <div class="audit-card"><strong>${rows.length}</strong>cotes importées</div>
+      <div class="audit-card ok"><strong>${found}</strong>photos trouvées</div>
+      <div class="audit-card ${missing.length?'warn':'ok'}"><strong>${missing.length}</strong>photos manquantes</div>`;
+    status.textContent=missing.length
+      ? 'Photos manquantes détectées pour certains joueurs cotés.'
+      : 'Audit OK : chaque joueur coté a une photo correspondante.';
+    list.innerHTML=(missing.length?missing:rows.slice(0,30)).map(p=>`
+      <div class="audit-row ${p.hasPhoto?'':'missing'}">
+        <strong>${esc(p.name)}</strong>
+        <span>${p.hasPhoto?'OK':'Manquante'} · ${esc(p.file)}</span>
+      </div>`).join('');
+  }catch(e){
+    status.textContent='Audit photos impossible : '+e.message;
+    summary.innerHTML=`
+      <div class="audit-card warn"><strong>${players.length}</strong>cotes importées</div>
+      <div class="audit-card warn"><strong>?</strong>photos vérifiées</div>
+      <div class="audit-card warn"><strong>!</strong>index indisponible</div>`;
+  }
 }
 
 window.importOdds=async function(){
