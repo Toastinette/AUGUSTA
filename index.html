@@ -285,9 +285,9 @@ const DEFAULT_RULES={
 function cloneRules(){return JSON.parse(JSON.stringify(DEFAULT_RULES));}
 function demoParticipants(){
   return [
-    {id:'morgan-demo',name:'Morgan',golfers:['Shane Lowry','Ludvig Åberg','Tommy Fleetwood','Jason Day'],guess:0,budgetUsed:88},
-    {id:'baptiste-demo',name:'Baptiste',golfers:['Rory McIlroy','Viktor Hovland','Max Homa','Ryan Fox'],guess:-8,budgetUsed:94},
-    {id:'chris-demo',name:'Chris',golfers:['Robert MacIntyre','Matt Fitzpatrick','Brian Harman','Justin Rose'],guess:-5,budgetUsed:50}
+    {id:'morgan-demo',name:'Morgan',golfers:['Shane Lowry','Ludvig Åberg','Tommy Fleetwood','Jason Day'],guess:0,budgetUsed:88,draftBudget:95,startBonus:7},
+    {id:'baptiste-demo',name:'Baptiste',golfers:['Rory McIlroy','Viktor Hovland','Max Homa','Ryan Fox'],guess:-8,budgetUsed:94,draftBudget:95,startBonus:1},
+    {id:'chris-demo',name:'Chris',golfers:['Robert MacIntyre','Matt Fitzpatrick','Brian Harman','Justin Rose'],guess:-5,budgetUsed:50,draftBudget:95,startBonus:45}
   ];
 }
 function normalizeParticipants(list){
@@ -320,6 +320,15 @@ function palierPts(r){
 }
 function totalRankPts(r){return posPts(r)+palierPts(r);}
 function multLabel(mult){return mult!==1?`×${mult}`:'';}
+function startBonus(part){
+  const saved=Number(part?.startBonus);
+  if(Number.isFinite(saved))return saved;
+  const used=Number(part?.budgetUsed);
+  if(!Number.isFinite(used))return 0;
+  const budget=Number(part?.draftBudget);
+  const baseBudget=Number.isFinite(budget)?budget:(gScoringRules.fantasyBudget||DEFAULT_RULES.fantasyBudget);
+  return Math.max(0,baseBudget-used);
+}
 function playerCost(odds){
   if(!odds||odds<=0)return 5;
   return Math.max(5,Math.min(55,Math.round(100/Math.sqrt(odds))));
@@ -600,6 +609,7 @@ function renderEntryForm(){
     zone.innerHTML='';
     if(!settingsZone)return;
     const locked=!canEditGuess();
+    const bonus=startBonus(mine);
     const golfers=(mine.golfers||[]).map(g=>{
       const o=getOddsInfo(g);
       return `<div class="entry-mini">${esc(g)}${o?` · cote ${o.odds.toFixed(2)} · ${o.cost} pts · ×${o.multiplier}`:''}</div>`;
@@ -620,6 +630,7 @@ function renderEntryForm(){
         </div>
       </div>
       <div class="entry-meta">${locked?'Pronostic score final bloqué à partir du J2.':'Pronostic score final modifiable jusqu’à la fin du J1.'}</div>
+      <div class="entry-meta">Bonus de départ figé : <strong>${bonus>=0?'+':''}${bonus} pts</strong></div>
       <div class="entry-meta"><strong>Équipe validée</strong>${golfers}</div>
       <div class="entry-actions">
         <button class="btn" onclick="window.saveEntrySettings()">Enregistrer</button>
@@ -742,6 +753,7 @@ window.saveEntryTeam=async function(){
     return;
   }
   const cost=teamCost(golfers);
+  const bonus=Math.max(0,budget-cost);
   if(cost>budget){
     setBanner(`Budget dépassé : ${cost}/${budget} pts. Remplace un favori par un joueur moins cher.`,'berr');
     return;
@@ -755,11 +767,11 @@ window.saveEntryTeam=async function(){
   try{
     const oddsMeta=golfers.map(g=>getOddsInfo(g));
     const existing=gParticipants.filter(p=>p.id!==id&&norm(p.name)!==norm(name));
-    const next=[...existing,{id,name,golfers,guess:0,budgetUsed:cost,oddsMeta,createdAt:new Date().toISOString()}];
+    const next=[...existing,{id,name,golfers,guess:0,budgetUsed:cost,draftBudget:budget,startBonus:bonus,oddsMeta,createdAt:new Date().toISOString()}];
     await setDoc(doc(db,'config','participants'),{list:next});
     localStorage.setItem(MY_ENTRY_KEY,id);
     clearEntryDraft();
-    setBanner(`Équipe validée : ${cost}/${budget} pts utilisés.`,'binfo');
+    setBanner(`Équipe validée : ${cost}/${budget} pts utilisés · bonus départ +${bonus} pts.`,'binfo');
     gParticipants=next;
     renderEntryForm();
   }catch(e){
@@ -1035,6 +1047,8 @@ function renderPodium(parsed){
 
   const results=parts.map(part=>{
     let total=0;
+    const initialBonus=isTotal?startBonus(part):0;
+    if(initialBonus)total+=initialBonus;
     const detail=part.golfers.map(g=>{
       const ep=matchPlayer(g,players);
 
@@ -1155,9 +1169,13 @@ function renderPodium(parsed){
 
     let extraHTML='';
     if(isTotal){
+      const initialBonus=startBonus(p);
       extraHTML=p.bonusOK
         ?`<div class="bonus-row"><span>🎯 Bonus score exact vainqueur</span><span>${signed(gScoringRules.exactWinner)} pts</span></div>`
         :`<div class="pred">Pronostic : <strong>${p.guess}</strong>${isFinal&&p.leaderStp!==null?` · Réel : <strong>${p.leaderStp}</strong>`:''}</div>`;
+      if(initialBonus){
+        extraHTML=`<div class="bonus-row"><span>Bonus de départ budget restant</span><span>${signed(initialBonus)} pts</span></div>${extraHTML}`;
+      }
     }
 
     card.innerHTML=`
@@ -1165,7 +1183,7 @@ function renderPodium(parsed){
   <div class="rnum">${rk}</div>
   <div class="pinfo">
     <div class="pname">${p.name}</div>
-    <div class="plabel">${isTotal?(p.budgetUsed!==undefined?`Budget ${p.budgetUsed}/${gScoringRules.fantasyBudget||100}`:`${rk}${rk===1?'er':'e'} du classement`):(roundNum===4&&gScoringRules.round4Multiplier!==1?`<span class="x2b">${multLabel(gScoringRules.round4Multiplier)}</span> points du round`:'Points du round')}</div>
+    <div class="plabel">${isTotal?(p.budgetUsed!==undefined?`Budget ${p.budgetUsed}/${p.draftBudget||gScoringRules.fantasyBudget||100} · départ ${signed(startBonus(p))}`:`${rk}${rk===1?'er':'e'} du classement`):(roundNum===4&&gScoringRules.round4Multiplier!==1?`<span class="x2b">${multLabel(gScoringRules.round4Multiplier)}</span> points du round`:'Points du round')}</div>
   </div>
   <div class="ppts">
     <div class="ppts-n">${p.total}</div>
@@ -1301,6 +1319,7 @@ function renderRulesModal(){
     <tr><td>🎯 Bonus score exact vainqueur</td><td class="pts-bonus"><strong>${signed(r.exactWinner)} pts</strong></td></tr>
     <tr><td>⚡ Round 4</td><td class="pts-x2"><strong>Points ${multLabel(r.round4Multiplier)||'×1'}</strong></td></tr>
     <tr><td>💰 Budget équipe</td><td class="pts-pos"><strong>${r.fantasyBudget||100} pts</strong></td></tr>
+    <tr><td>💰 Budget non dépensé</td><td class="pts-bonus"><strong>bonus de départ figé</strong></td></tr>
     <tr><td>📈 Cote joueur</td><td class="pts-x2"><strong>multiplie les points positifs</strong></td></tr>`;
 }
 
