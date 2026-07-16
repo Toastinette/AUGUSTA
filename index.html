@@ -387,6 +387,28 @@ function demoOddsData(){
 //  HELPERS
 // ══════════════════════════════════════════════════════
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').trim();}
+function firstNameMatches(a,b){
+  if(!a||!b)return false;
+  return a===b||a.startsWith(b)||b.startsWith(a)||(a[0]===b[0]&&Math.min(a.length,b.length)<=3);
+}
+function bestNameMatch(name,items,getName){
+  const n=norm(name);
+  const exact=items.find(item=>norm(getName(item))===n);
+  if(exact)return exact;
+  const parts=n.split(' ').filter(Boolean);
+  const first=parts[0];
+  const last=parts[parts.length-1];
+  if(!last||last.length<=3)return null;
+  const sameLast=items.filter(item=>{
+    const itemParts=norm(getName(item)).split(' ').filter(Boolean);
+    return itemParts[itemParts.length-1]===last;
+  });
+  if(sameLast.length===1)return sameLast[0];
+  return sameLast.find(item=>{
+    const itemFirst=norm(getName(item)).split(' ').filter(Boolean)[0];
+    return firstNameMatches(first,itemFirst);
+  })||null;
+}
 function fmtStp(n){if(n===null||n===undefined)return{t:'—',c:''};if(n===0)return{t:'E',c:'even'};return n<0?{t:`${n}`,c:'under'}:{t:`+${n}`,c:'over'};}
 function ts(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
 function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';}
@@ -403,11 +425,7 @@ function setOddsData(data){
   renderEntryForm();
 }
 function getOddsInfo(name){
-  const n=norm(name);
-  if(gOddsByNorm[n])return gOddsByNorm[n];
-  const last=n.split(' ').pop();
-  if(last&&last.length>3)return gOddsPlayers.find(p=>p.normName.includes(last))||null;
-  return null;
+  return bestNameMatch(name,gOddsPlayers,p=>p.normName||p.name);
 }
 
 // ══════════════════════════════════════════════════════
@@ -938,12 +956,7 @@ function calcCutBonus(player){
 }
 
 function matchPlayer(gName,players){
-  const n=norm(gName);
-  let f=players.find(p=>p.normName===n);
-  if(f)return f;
-  const last=n.split(' ').pop();
-  if(last.length>3)f=players.find(p=>p.normName.includes(last));
-  return f||null;
+  return bestNameMatch(gName,players,p=>p.normName||p.displayName);
 }
 
 // ══════════════════════════════════════════════════════
