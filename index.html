@@ -409,6 +409,14 @@ function bestNameMatch(name,items,getName){
     return firstNameMatches(first,itemFirst);
   })||null;
 }
+function majorKeyFromName(name){
+  const n=norm(name);
+  if(n.includes('masters'))return 'masters';
+  if(n.includes('pga championship'))return 'pga championship';
+  if(n.includes('u s open')||n.includes('us open'))return 'u.s. open';
+  if(n.includes('the open')||n.includes('open championship'))return 'the open championship';
+  return null;
+}
 function fmtStp(n){if(n===null||n===undefined)return{t:'—',c:''};if(n===0)return{t:'E',c:'even'};return n<0?{t:`${n}`,c:'under'}:{t:`+${n}`,c:'over'};}
 function ts(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
 function setBanner(msg,cls='berr'){const z=document.getElementById('bzone');z.innerHTML=msg?`<div class="banner ${cls}">${msg}</div>`:'';}
@@ -868,7 +876,7 @@ function parseEvent(ev){
   const isLive=sn.includes('progress')||sn==='in';
   const isFinal=(sn.includes('post')||sn.includes('final')||sn.includes('complete'))&&currentRound===4;
   const year=new Date().getFullYear();
-  const majorKey=MAJOR_NAMES.find(m=>norm(ev.name||'').includes(m))||'unknown';
+  const majorKey=majorKeyFromName(ev.name)||'unknown';
   const tournKey=`${majorKey}_${year}`;
   if(IS_TEST_MODE&&gCutLines[tournKey]===undefined)gCutLines[tournKey]=3;
 
@@ -933,9 +941,9 @@ function parseEvent(ev){
 // ══════════════════════════════════════════════════════
 //  POINTS
 // ══════════════════════════════════════════════════════
-function calcPtsForRound(player,roundNum){
+function calcPtsForRound(player,roundNum,rankOverride=null){
   if(!player)return{pts:0,nf:true};
-  const rank=player.rank;
+  const rank=rankOverride??player.rank;
   if(rank===undefined||rank===null)return{pts:0,nf:false,noData:true};
   const score=player.roundScores[roundNum];
   if(score===undefined)return{pts:0,nf:false,noData:true};
@@ -959,6 +967,20 @@ function matchPlayer(gName,players){
   return bestNameMatch(gName,players,p=>p.normName||p.displayName);
 }
 
+function rankMapThroughRound(players,roundNum){
+  const rows=players.map(p=>{
+    let total=0;
+    for(let r=1;r<=roundNum;r++){
+      const score=p.roundScores?.[r];
+      if(score===undefined)return null;
+      total+=score;
+    }
+    return{normName:p.normName,total};
+  }).filter(Boolean);
+  const distinct=[...new Set(rows.map(p=>p.total))].sort((a,b)=>a-b);
+  return Object.fromEntries(rows.map(p=>[p.normName,distinct.indexOf(p.total)+1]));
+}
+
 // ══════════════════════════════════════════════════════
 //  AUTO-FREEZE : fige automatiquement les rounds terminés dans Firebase
 // ══════════════════════════════════════════════════════
@@ -978,8 +1000,9 @@ async function autoFreezeCompletedRounds(parsed){
 
     // Calcule les points par joueur pour ce round
     const pointsByPlayer={};
+    const ranks=rankMapThroughRound(players,r);
     for(const ep of players){
-      const c=calcPtsForRound(ep,r);
+      const c=calcPtsForRound(ep,r,ranks[ep.normName]);
       if(!c.nf&&!c.noData){
         pointsByPlayer[ep.normName]={pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,basePts:c.basePts,oddsPts:c.oddsPts,rank:c.rank,score:c.score,mult:c.mult,oddsMult:c.oddsMult,odds:c.odds,cost:c.cost};
       }
@@ -1046,6 +1069,8 @@ function renderPodium(parsed){
   const isTotal=gActiveTab==='total';
   const roundNum=isTotal?null:parseInt(gActiveTab.replace('r',''));
   const frozen=gFrozenRounds[tournKey]||{};
+  const rankMaps={};
+  for(let r=1;r<=currentRound;r++)rankMaps[r]=rankMapThroughRound(players,r);
 
   if(isTotal){
     dayNote.style.display='none';
@@ -1079,7 +1104,7 @@ function renderPodium(parsed){
             sumPts+=pts;
           }else{
             // Round live
-            const c=calcPtsForRound(ep,r);
+            const c=calcPtsForRound(ep,r,rankMaps[r]?.[ep?.normName]);
             if(!c.nf&&!c.noData){
               byRound.push({r,pts:c.pts,rankPts:c.rankPts,scorePts:c.scorePts,frozen:false,mult:c.mult,oddsMult:c.oddsMult,odds:c.odds});
               sumPts+=c.pts;
@@ -1102,7 +1127,7 @@ function renderPodium(parsed){
           c={pts,rankPts:fd?.rankPts,scorePts:fd?.scorePts,rank:fd?.rank,score:fd?.score,mult:fd?.mult??(roundNum===4?gScoringRules.round4Multiplier:1),oddsMult:fd?.oddsMult,odds:fd?.odds,cost:fd?.cost,nf:false};
           isFrozenData=true;
         }else{
-          c=calcPtsForRound(ep,roundNum);
+          c=calcPtsForRound(ep,roundNum,rankMaps[roundNum]?.[ep?.normName]);
           pts=c.nf?0:c.pts;
         }
         total+=pts;
@@ -1226,9 +1251,9 @@ function updateHeader(eventName){
     'masters':'Masters Tournament',
     'pga championship':'PGA Championship',
     'u.s. open':'U.S. Open','us open':'U.S. Open',
-    'the open championship':'The Open Championship','open championship':'The Open Championship'
+    'the open':'The Open Championship','the open championship':'The Open Championship','open championship':'The Open Championship'
   };
-  const key=MAJOR_NAMES.find(m=>norm(eventName||'').includes(m));
+  const key=majorKeyFromName(eventName);
   const title=map[key]||'Majeurs';
   const words=title.split(' ');
   document.getElementById('headerTitle').innerHTML=`${words[0]}<br/><em>${words.slice(1).join(' ')}</em>`;
