@@ -558,22 +558,38 @@ async function loadCutLines(){
 
 // Liste des tournois Majeurs possibles (clé utilisée par index.html : major_year)
 const MAJOR_KEYS=['masters','pga championship','u.s. open','the open championship'];
+const MAJOR_LABELS={
+  'masters':'Masters',
+  'pga championship':'PGA Championship',
+  'u.s. open':'U.S. Open',
+  'the open championship':'The Open Championship'
+};
+
+function cutLineLabel(tournKey){
+  const idx=tournKey.lastIndexOf('_');
+  const key=idx>0?tournKey.slice(0,idx):tournKey;
+  const year=idx>0?tournKey.slice(idx+1):'';
+  return `${MAJOR_LABELS[key]||key}${year?` · ${year}`:''}`;
+}
 
 function renderCutLineList(){
   const zone=document.getElementById('cutLineList');
   const year=new Date().getFullYear();
-  // Affiche un champ pour chaque tournoi qui a déjà des rounds figés (donc en cours/passé)
-  // + un champ libre pour saisir manuellement une clé de tournoi
-  const knownTournKeys=new Set([...Object.keys(frozenRounds),...Object.keys(cutLines)]);
-  if(knownTournKeys.size===0){
-    // Propose les 4 majeurs de l'année en cours par défaut
-    MAJOR_KEYS.forEach(m=>knownTournKeys.add(`${m}_${year}`));
-  }
+  // Affiche toujours les 4 majeurs de l'année, puis les anciennes clés connues.
+  const knownTournKeys=new Set(MAJOR_KEYS.map(m=>`${m}_${year}`));
+  Object.keys(frozenRounds).forEach(k=>knownTournKeys.add(k));
+  Object.keys(cutLines).forEach(k=>knownTournKeys.add(k));
+  const orderedKeys=[...knownTournKeys].sort((a,b)=>{
+    const ia=MAJOR_KEYS.findIndex(m=>a===`${m}_${year}`);
+    const ib=MAJOR_KEYS.findIndex(m=>b===`${m}_${year}`);
+    if(ia!==-1||ib!==-1)return (ia===-1?99:ia)-(ib===-1?99:ib);
+    return a.localeCompare(b);
+  });
   let html='';
-  for(const tk of knownTournKeys){
+  for(const tk of orderedKeys){
     const val=cutLines[tk];
     html+=`<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;">
-      <span style="flex:1;font-size:12px;font-family:'DM Mono',monospace;color:var(--txt2);">${tk}</span>
+      <span style="flex:1;font-size:12px;font-family:'DM Mono',monospace;color:var(--txt2);">${cutLineLabel(tk)}<br/><small style="color:var(--txt3);">${tk}</small></span>
       <input class="field-input" style="width:70px;text-align:center;" type="number"
         value="${val??''}" placeholder="+4"
         onchange="window.setCutLine('${tk}', this.value)"/>
