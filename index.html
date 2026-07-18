@@ -161,6 +161,23 @@
     .scorecard-grid{display:grid;grid-template-columns:1fr 54px 54px 54px;gap:6px;align-items:center;}
     .scorecard-grid div{font-family:'DM Mono',monospace;font-size:12px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.06);}
     .scorecard-grid div:nth-child(4n+2),.scorecard-grid div:nth-child(4n+3),.scorecard-grid div:nth-child(4n+4){text-align:center;}
+    .scorecard-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 12px;}
+    .scorecard-tab{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 4px;color:var(--txt2);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+    .scorecard-tab.active{background:rgba(201,168,76,.16);border-color:rgba(201,168,76,.34);color:var(--gold2);}
+    .scorecard-tab:disabled{opacity:.35;cursor:not-allowed;}
+    .hole-summary{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--txt2);}
+    .hole-summary span{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:7px 8px;flex:1;text-align:center;}
+    .hole-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;margin-top:10px;}
+    .hole-cell{min-height:54px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:'DM Mono',monospace;}
+    .hole-num{font-size:9px;color:var(--txt3);}
+    .hole-strokes{font-size:15px;font-weight:700;color:var(--txt1);line-height:1;}
+    .hole-rel{font-size:10px;color:var(--txt2);}
+    .hole-cell.eagle{background:rgba(34,197,94,.2);border-color:rgba(74,222,128,.42);}
+    .hole-cell.birdie{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.28);}
+    .hole-cell.bogey{background:rgba(248,113,113,.13);border-color:rgba(248,113,113,.3);}
+    .hole-cell.double{background:rgba(239,68,68,.2);border-color:rgba(248,113,113,.45);}
+    .hole-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--txt3);}
+    .hole-legend span{border-radius:999px;padding:4px 7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);}
     @media(max-width:390px){
       .wrap{padding:0 12px;}
       .din{padding:13px 14px 16px;}
@@ -173,6 +190,7 @@
       .odds-tag{margin-left:87px;font-size:10px;}
       .pick-row{grid-template-columns:76px 1fr;gap:10px;}
       .photo-frame.pick{width:76px;height:88px;}
+      .hole-grid{grid-template-columns:repeat(6,minmax(0,1fr));}
     }
     /* HEADER BUTTONS */
     .header-btns{position:absolute;top:28px;right:0;display:flex;gap:8px;}
@@ -899,15 +917,26 @@ function parseEvent(ev){
       // est déjà le score ISOLÉ du round (pas un cumulé). Pas de calcul de différence nécessaire.
       const ls=ath.linescores||[];
       const roundScores={};
+      const holeScores={};
       ls.forEach((l,i)=>{
+        const roundNum=Number(l.period)||i+1;
         const v=parseScoreStr(l.displayValue??null);
-        if(v!==null)roundScores[i+1]=v;
+        if(v!==null)roundScores[roundNum]=v;
+        const holes=(l.linescores||[]).map(h=>{
+          const relative=parseScoreStr(h.scoreType?.displayValue??null);
+          const strokesRaw=h.displayValue??h.value;
+          const strokes=strokesRaw===undefined||strokesRaw===null||strokesRaw===''?null:parseInt(String(strokesRaw),10);
+          const number=Number(h.period)||0;
+          const par=Number.isFinite(strokes)&&relative!==null?strokes-relative:null;
+          return{number,strokes:Number.isFinite(strokes)?strokes:null,relative,par:Number.isFinite(par)?par:null};
+        }).filter(h=>h.number).sort((a,b)=>a.number-b.number);
+        if(holes.length)holeScores[roundNum]=holes;
       });
 
       // Le cut N'EST PLUS détecté automatiquement (ESPN ne fournit pas de champ fiable).
       // Il sera déterminé après coup en comparant stpTotal à la cutLine saisie manuellement
       // dans le configurateur. madeCut reste null ici, calculé plus bas.
-      raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,madeCut:null,rank:null});
+      raw.push({displayName:name,normName:norm(name),stpTotal,roundScores,holeScores,madeCut:null,rank:null});
     }
   }
 
@@ -1287,17 +1316,59 @@ function findParsedPlayer(name){
   return matchPlayer(name,gParsed.players)||gParsed.players.find(p=>p.displayName===name)||null;
 }
 
-window.openPlayerCard=function(name){
+function holeRelLabel(n){
+  if(n===null||n===undefined)return '—';
+  if(n===0)return 'E';
+  return n>0?`+${n}`:`${n}`;
+}
+function holeClass(n){
+  if(n===null||n===undefined)return '';
+  if(n<=-2)return 'eagle';
+  if(n===-1)return 'birdie';
+  if(n===1)return 'bogey';
+  if(n>=2)return 'double';
+  return 'par';
+}
+function holeSplitTotal(holes,from,to){
+  const played=holes.filter(h=>h.number>=from&&h.number<=to&&h.strokes!==null);
+  if(!played.length)return {strokes:null,relative:null};
+  return {
+    strokes:played.reduce((sum,h)=>sum+h.strokes,0),
+    relative:played.reduce((sum,h)=>sum+(h.relative||0),0)
+  };
+}
+function holeCellHTML(h){
+  return `<div class="hole-cell ${holeClass(h.relative)}">
+    <div class="hole-num">T${h.number}${h.par?` · P${h.par}`:''}</div>
+    <div class="hole-strokes">${h.strokes??'—'}</div>
+    <div class="hole-rel">${holeRelLabel(h.relative)}</div>
+  </div>`;
+}
+
+window.openPlayerCard=function(name,selectedRound=null){
   const p=findParsedPlayer(name);
   if(!p)return;
   const overlay=document.getElementById('playerOverlay');
   const body=document.getElementById('playerCardBody');
   const stp=fmtStp(p.stpTotal);
   const rank=p.madeCut===false?'CUT':p.rank?`${p.rank}${p.rank===1?'er':'e'}`:'—';
+  const availableRounds=[1,2,3,4].filter(r=>p.roundScores?.[r]!==undefined||p.holeScores?.[r]?.length);
+  const fallbackRound=availableRounds.includes(gParsed.currentRound)?gParsed.currentRound:availableRounds[availableRounds.length-1];
+  const activeRound=availableRounds.includes(Number(selectedRound))?Number(selectedRound):fallbackRound;
+  const holes=p.holeScores?.[activeRound]||[];
+  const front=holeSplitTotal(holes,1,9);
+  const back=holeSplitTotal(holes,10,18);
+  const all=holeSplitTotal(holes,1,18);
+  const roundTabs=[1,2,3,4].map(r=>{
+    const disabled=!availableRounds.includes(r);
+    const active=r===activeRound;
+    return `<button class="scorecard-tab${active?' active':''}" ${disabled?'disabled':''} onclick="window.openPlayerCard('${jsStr(p.displayName)}',${r})">R${r}</button>`;
+  }).join('');
   const rows=[1,2,3,4].map(r=>{
     const v=p.roundScores?.[r];
     const s=fmtStp(v);
-    return `<div>Round ${r}</div><div class="${s.c}">${s.t}</div><div>${r===gParsed.currentRound?'actuel':'—'}</div><div>${v===undefined?'—':v}</div>`;
+    const gross=holeSplitTotal(p.holeScores?.[r]||[],1,18).strokes;
+    return `<div>Round ${r}</div><div class="${s.c}">${s.t}</div><div>${r===gParsed.currentRound?'actuel':'—'}</div><div>${gross??'—'}</div>`;
   }).join('');
   body.innerHTML=`<div class="scorecard-head">
     ${photoHTML(p.displayName,'hero')}
@@ -1310,7 +1381,20 @@ window.openPlayerCard=function(name){
     <div>Carte</div><div>Score</div><div>Statut</div><div>Brut</div>
     ${rows}
   </div>
-  <div class="entry-meta">Carte basée sur les données disponibles dans ESPN. Le détail trou par trou pourra être ajouté si l’API le fournit pendant le tournoi.</div>`;
+  <div class="scorecard-tabs">${roundTabs}</div>
+  ${holes.length?`
+    <div class="hole-summary">
+      <span>Aller ${front.strokes??'—'} · ${holeRelLabel(front.relative)}</span>
+      <span>Retour ${back.strokes??'—'} · ${holeRelLabel(back.relative)}</span>
+      <span>Total ${all.strokes??'—'} · ${holeRelLabel(all.relative)}</span>
+    </div>
+    <div class="hole-grid">${holes.map(holeCellHTML).join('')}</div>
+    <div class="hole-legend">
+      <span>Vert : birdie ou mieux</span>
+      <span>Neutre : par</span>
+      <span>Rouge : bogey ou pire</span>
+    </div>
+  `:`<div class="entry-meta">Le détail trou par trou n’est pas encore disponible pour ce round dans ESPN.</div>`}`;
   overlay.classList.add('open');
 };
 window.closePlayerCard=function(){document.getElementById('playerOverlay')?.classList.remove('open');};
