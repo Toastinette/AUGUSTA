@@ -944,14 +944,8 @@ function parseEvent(ev){
   const withScore=raw.filter(p=>p.stpTotal!==null);
   const noScore=raw.filter(p=>p.stpTotal===null);
   withScore.sort((a,b)=>a.stpTotal-b.stpTotal);
-  let lastTotal=null,lastRank=0;
-  withScore.forEach((p,idx)=>{
-    if(p.stpTotal!==lastTotal){
-      lastTotal=p.stpTotal;
-      lastRank=idx+1;
-    }
-    p.rank=lastRank;
-  });
+  const distinct=[...new Set(withScore.map(p=>p.stpTotal))].sort((a,b)=>a-b);
+  for(const p of withScore)p.rank=distinct.indexOf(p.stpTotal)+1;
 
   // Applique la cutLine manuelle (si définie dans Firebase) : score APRÈS R1+R2 > cutLine => cut manqué
   // IMPORTANT : on compare le score cumulé à la fin du Round 2 (pas le score total actuel,
@@ -1015,17 +1009,9 @@ function rankMapThroughRound(players,roundNum){
       total+=score;
     }
     return{normName:p.normName,total};
-  }).filter(Boolean).sort((a,b)=>a.total-b.total);
-  const ranks={};
-  let lastTotal=null,lastRank=0;
-  rows.forEach((p,idx)=>{
-    if(p.total!==lastTotal){
-      lastTotal=p.total;
-      lastRank=idx+1;
-    }
-    ranks[p.normName]=lastRank;
-  });
-  return ranks;
+  }).filter(Boolean);
+  const distinct=[...new Set(rows.map(p=>p.total))].sort((a,b)=>a-b);
+  return Object.fromEntries(rows.map(p=>[p.normName,distinct.indexOf(p.total)+1]));
 }
 
 function currentRankMap(players){
